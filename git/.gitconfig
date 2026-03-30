@@ -2,10 +2,6 @@
 	email = vitorebatista@gmail.com
 	name = Vitor Emanuel Batista
 
-[credential "https://github.com"]
-	helper =
-	helper = !/opt/homebrew/bin/gh auth git-credential
-
 [init]
 	defaultBranch = main
 

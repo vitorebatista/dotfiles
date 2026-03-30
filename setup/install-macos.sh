@@ -59,6 +59,10 @@ ln -sf "$DOTFILES/starship/starship.toml" "$HOME/.config/starship.toml"
 mkdir -p "$HOME/.config/alacritty"
 ln -sf "$DOTFILES/alacritty/alacritty.toml" "$HOME/.config/alacritty/alacritty.toml"
 
+# Git credential helper (macOS-specific path)
+git config --file "$HOME/.gitconfig.local" credential.https://github.com.helper ""
+git config --file "$HOME/.gitconfig.local" --add credential.https://github.com.helper "!/opt/homebrew/bin/gh auth git-credential"
+
 # --- macOS defaults ---
 echo "[7/7] Applying macOS defaults..."
 
