@@ -1,0 +1,3 @@
+[disk-capacity]
+interval=240
+command=printf '<span color="#7B8394">Disk:</span> <span color="#D8DEE9">%s</span>\n' "$(df / --output=pcent | awk 'NR==2{print $1}')"

@@ -1,0 +1,3 @@
+[memory]
+interval=10
+command=/usr/share/i3xrocks/scripts/memory

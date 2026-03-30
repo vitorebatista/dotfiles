@@ -1,0 +1,3 @@
+[cpu-usage]
+interval=5
+command=grep 'cpu ' /proc/stat | awk '{idle=$5; total=0; for(i=2;i<=NF;i++) total+=$i; printf "<span color=\"#7B8394\">CPU:</span> <span color=\"#D8DEE9\">%d%%</span>\n", 100*(total-idle)/total}'
