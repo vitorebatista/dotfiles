@@ -21,6 +21,11 @@ Personal development environment configuration for **Ubuntu/Regolith** and **mac
 - **Alacritty** with Dracula theme
 - **Tmux** with sane defaults (Ctrl-A prefix, mouse, splits with `|` and `-`)
 
+### Editors
+- **VS Code** settings and extensions list with install script
+- **Claude Code** plugin configuration
+- **.editorconfig** for cross-editor consistency
+
 ### Regolith (Linux only)
 - i3xrocks bar: CPU%, Memory%, Disk%, Temperature, Battery, Time
 - Xresources overrides
@@ -39,7 +44,6 @@ Personal development environment configuration for **Ubuntu/Regolith** and **mac
 | git-delta | beautiful diffs |
 | tmux | terminal multiplexer |
 | ncdu | disk usage analyzer |
-| btop | system monitor |
 | alacritty | GPU-accelerated terminal |
 
 ## Quick start
@@ -61,6 +65,20 @@ bash ~/dotfiles/setup/install-macos.sh
 bash ~/dotfiles/setup/symlinks.sh
 ```
 
+## Day-to-day usage
+
+### Sync local changes back to repo
+```bash
+dotfiles-sync
+```
+Copies current configs into the repo and shows what changed.
+
+### Update dotfiles from repo on another machine
+```bash
+dotfiles-update
+```
+Pulls latest changes, re-applies symlinks, and updates zsh plugins.
+
 ## Structure
 
 ```
@@ -75,6 +93,12 @@ dotfiles/
 │   └── alacritty.toml
 ├── tmux/                 # Tmux config
 │   └── .tmux.conf
+├── vscode/               # VS Code
+│   ├── settings.json
+│   ├── extensions.txt
+│   └── install-extensions.sh
+├── claude/               # Claude Code
+│   └── settings.json
 ├── regolith/             # Regolith desktop (Linux)
 │   ├── Xresources
 │   └── i3xrocks/         # Bar indicators
@@ -82,7 +106,11 @@ dotfiles/
 │   ├── install-ubuntu.sh # Full setup for Ubuntu/Regolith
 │   ├── install-macos.sh  # Full setup for macOS
 │   └── symlinks.sh       # Symlinks only
-└── bin/                  # Custom scripts (added to PATH)
+├── bin/                  # Custom scripts (added to PATH)
+│   ├── dotfiles-sync     # Sync configs back to repo
+│   └── dotfiles-update   # Pull and re-apply
+├── .editorconfig         # Cross-editor formatting rules
+└── CLAUDE.md             # AI agent context
 ```
 
 ## Local overrides
