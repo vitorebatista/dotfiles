@@ -1,0 +1,41 @@
+[
+  // Duplicate line
+  { "key": "shift+alt+down", "command": "editor.action.copyLinesDownAction" },
+
+  // Delete line
+  { "key": "ctrl+shift+k", "command": "editor.action.deleteLines" },
+
+  // Move line up/down
+  { "key": "alt+up", "command": "editor.action.moveLinesUpAction" },
+  { "key": "alt+down", "command": "editor.action.moveLinesDownAction" },
+
+  // Toggle sidebar
+  { "key": "ctrl+b", "command": "workbench.action.toggleSidebarVisibility" },
+
+  // Toggle terminal
+  { "key": "ctrl+`", "command": "workbench.action.terminal.toggleTerminal" },
+
+  // Format document
+  { "key": "ctrl+shift+f", "command": "editor.action.formatDocument" },
+
+  // Go to file
+  { "key": "ctrl+p", "command": "workbench.action.quickOpen" },
+
+  // Go to symbol
+  { "key": "ctrl+shift+o", "command": "workbench.action.gotoSymbol" },
+
+  // Git: stage all and commit
+  { "key": "ctrl+shift+g ctrl+shift+c", "command": "git.commitAll" },
+
+  // Git: pull
+  { "key": "ctrl+shift+g ctrl+shift+p", "command": "git.pull" },
+
+  // Git: push
+  { "key": "ctrl+shift+g ctrl+shift+u", "command": "git.push" },
+
+  // Close all editors
+  { "key": "ctrl+shift+w", "command": "workbench.action.closeAllEditors" },
+
+  // Focus editor from terminal
+  { "key": "escape", "command": "workbench.action.focusActiveEditorGroup", "when": "terminalFocus" }
+]
