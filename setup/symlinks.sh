@@ -25,6 +25,14 @@ ln -sf "$DOTFILES/starship/starship.toml" "$HOME/.config/starship.toml"
 mkdir -p "$HOME/.config/alacritty"
 ln -sf "$DOTFILES/alacritty/alacritty.toml" "$HOME/.config/alacritty/alacritty.toml"
 
+# VS Code
+mkdir -p "$HOME/.config/Code/User"
+ln -sf "$DOTFILES/vscode/settings.json" "$HOME/.config/Code/User/settings.json"
+
+# Claude Code
+mkdir -p "$HOME/.claude"
+ln -sf "$DOTFILES/claude/settings.json" "$HOME/.claude/settings.json"
+
 # Regolith (Linux only)
 if [ -d /etc/regolith ]; then
   mkdir -p "$HOME/.config/regolith3/i3xrocks/conf.d"
