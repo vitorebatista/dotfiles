@@ -14,7 +14,7 @@ sudo apt install -y \
   bat fd-find fzf ripgrep tmux ncdu grc jq httpie \
   build-essential cmake pkg-config \
   libfontconfig1-dev libxcb-xfixes0-dev libxkbcommon-dev \
-  docker.io docker-compose-v2
+  docker.io docker-compose-v2 gh
 
 # --- Rust & Cargo tools ---
 echo "[2/8] Installing Rust and Cargo tools..."
@@ -61,6 +61,10 @@ ln -sf "$DOTFILES/starship/starship.toml" "$HOME/.config/starship.toml"
 
 mkdir -p "$HOME/.config/alacritty"
 ln -sf "$DOTFILES/alacritty/alacritty.toml" "$HOME/.config/alacritty/alacritty.toml"
+
+# Git credential helper (Linux-specific path)
+git config --file "$HOME/.gitconfig.local" credential.https://github.com.helper ""
+git config --file "$HOME/.gitconfig.local" --add credential.https://github.com.helper "!/usr/bin/gh auth git-credential"
 
 # --- Regolith (if installed) ---
 if command -v i3 &>/dev/null && [ -d /etc/regolith ]; then
