@@ -28,3 +28,18 @@ This is a dotfiles repository for personal development environment setup.
 - Keep configs portable between Ubuntu and macOS where possible
 - Use `.local` override pattern for machine-specific values
 - Do not commit secrets, tokens, or absolute paths
+
+## Syncing dotfiles
+
+When editing any config file managed by this repo (whether from inside `~/dotfiles/` or from the live location like `~/.zshrc`), always update BOTH the live file AND the corresponding file in `~/dotfiles/`, then commit and push to origin.
+
+**Managed locations (dotfiles dir → live location):**
+- `zsh/.zshrc` → `~/.zshrc`
+- `git/.gitconfig` → `~/.gitconfig`
+- `starship/starship.toml` → `~/.config/starship.toml`
+- `alacritty/` → `~/.config/alacritty/`
+- `tmux/.tmux.conf` → `~/.tmux.conf`
+- `vscode/` → `~/.config/Code/User/`
+- `claude/` → `~/.claude/`
+- `regolith/` → `~/.config/regolith3/`
+- `bin/` → `~/bin/`
