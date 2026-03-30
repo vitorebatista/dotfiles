@@ -1,0 +1,46 @@
+#!/bin/bash
+# Sync current configs back to the dotfiles repo
+# Usage: dotfiles-sync
+
+set -e
+
+DOTFILES="$HOME/dotfiles"
+
+echo "Syncing configs to $DOTFILES..."
+
+# Zsh
+cp "$HOME/.zshrc" "$DOTFILES/zsh/.zshrc"
+
+# Git (exclude local includes)
+cp "$HOME/.gitconfig" "$DOTFILES/git/.gitconfig"
+
+# Starship
+cp "$HOME/.config/starship.toml" "$DOTFILES/starship/starship.toml"
+
+# Alacritty
+[ -f "$HOME/.config/alacritty/alacritty.toml" ] && \
+  cp "$HOME/.config/alacritty/alacritty.toml" "$DOTFILES/alacritty/alacritty.toml"
+
+# Tmux
+cp "$HOME/.tmux.conf" "$DOTFILES/tmux/.tmux.conf"
+
+# VS Code
+[ -f "$HOME/.config/Code/User/settings.json" ] && \
+  cp "$HOME/.config/Code/User/settings.json" "$DOTFILES/vscode/settings.json"
+command -v code &>/dev/null && \
+  code --list-extensions > "$DOTFILES/vscode/extensions.txt"
+
+# Regolith (Linux only)
+if [ -d "$HOME/.config/regolith3/i3xrocks/conf.d" ]; then
+  cp "$HOME/.config/regolith3/i3xrocks/conf.d/"* "$DOTFILES/regolith/i3xrocks/" 2>/dev/null
+  [ -f "$HOME/.config/regolith3/Xresources" ] && \
+    cp "$HOME/.config/regolith3/Xresources" "$DOTFILES/regolith/Xresources"
+fi
+
+# Show what changed
+cd "$DOTFILES"
+echo ""
+echo "Changes:"
+git status --short
+echo ""
+echo "Run 'cd ~/dotfiles && git add -A && git commit' to save."

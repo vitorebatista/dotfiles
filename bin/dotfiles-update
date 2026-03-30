@@ -1,0 +1,27 @@
+#!/bin/bash
+# Pull latest dotfiles and re-apply symlinks
+# Usage: dotfiles-update
+
+set -e
+
+DOTFILES="$HOME/dotfiles"
+
+echo "Updating dotfiles..."
+
+cd "$DOTFILES"
+git pull --rebase origin main
+
+echo "Re-applying symlinks..."
+bash "$DOTFILES/setup/symlinks.sh"
+
+# Update zsh plugins
+ZSH_CUSTOM="${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}"
+for plugin_dir in "$ZSH_CUSTOM/plugins/"*/; do
+  if [ -d "$plugin_dir/.git" ]; then
+    echo "Updating $(basename "$plugin_dir")..."
+    git -C "$plugin_dir" pull --quiet 2>/dev/null || true
+  fi
+done
+
+echo ""
+echo "Done! Run 'source ~/.zshrc' to apply."
