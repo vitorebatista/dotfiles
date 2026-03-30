@@ -26,8 +26,10 @@ mkdir -p "$HOME/.config/alacritty"
 ln -sf "$DOTFILES/alacritty/alacritty.toml" "$HOME/.config/alacritty/alacritty.toml"
 
 # VS Code
-mkdir -p "$HOME/.config/Code/User"
+mkdir -p "$HOME/.config/Code/User/snippets"
 ln -sf "$DOTFILES/vscode/settings.json" "$HOME/.config/Code/User/settings.json"
+ln -sf "$DOTFILES/vscode/keybindings.json" "$HOME/.config/Code/User/keybindings.json"
+ln -sf "$DOTFILES/vscode/snippets/global.code-snippets" "$HOME/.config/Code/User/snippets/global.code-snippets"
 
 # Claude Code
 mkdir -p "$HOME/.claude"
