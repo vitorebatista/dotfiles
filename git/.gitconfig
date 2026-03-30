@@ -1,0 +1,76 @@
+[user]
+	email = vitorebatista@gmail.com
+	name = Vitor Emanuel Batista
+
+[credential "https://github.com"]
+	helper =
+	helper = !/usr/bin/gh auth git-credential
+
+[init]
+	defaultBranch = main
+
+[pull]
+	rebase = true
+
+[push]
+	default = current
+	autoSetupRemote = true
+	followTags = true
+
+[fetch]
+	prune = true
+	pruneTags = true
+
+[rebase]
+	autoStash = true
+	autoSquash = true
+
+[merge]
+	conflictstyle = zdiff3
+
+[diff]
+	algorithm = histogram
+	colorMoved = default
+
+[rerere]
+	enabled = true
+
+[core]
+	pager = delta
+
+[interactive]
+	diffFilter = delta --color-only
+
+[delta]
+	navigate = true
+	line-numbers = true
+	side-by-side = true
+	syntax-theme = Dracula
+
+[help]
+	autocorrect = prompt
+
+[alias]
+	a = add
+	aa = add --all
+	c = commit
+	cm = commit -m
+	co = checkout
+	cb = checkout -b
+	s = status -sb
+	d = diff
+	ds = diff --staged
+	l = log --oneline -20
+	lg = log --graph --oneline --decorate -20
+	my = log --author='Vitor' --oneline -20
+	recent = branch --sort=-committerdate --format='%(committerdate:relative)\t%(refname:short)'
+	undo = reset --soft HEAD~1
+	amend = commit --amend --no-edit
+	unstage = restore --staged
+	discard = checkout --
+	nuke = !git reset --hard && git clean -fd
+	pr = !gh pr create
+	prs = !gh pr list
+
+[include]
+	path = ~/.gitconfig.local
