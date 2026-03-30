@@ -23,12 +23,9 @@ brew install \
 
 # --- Brew casks ---
 echo "[3/7] Installing apps..."
-brew install --cask \
-  alacritty \
-  visual-studio-code \
-  docker \
-  raycast \
-  1password
+for cask in alacritty visual-studio-code docker raycast 1password; do
+  brew install --cask "$cask" 2>/dev/null || true
+done
 
 # --- Oh My Zsh ---
 echo "[4/7] Installing Oh My Zsh..."
