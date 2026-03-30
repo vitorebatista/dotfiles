@@ -1,3 +1,4 @@
 # Date Time
 [time]
-interval=xresource:i3xrocks.time.interval 10
+command=/usr/share/i3xrocks/scripts/time
+interval=10
