@@ -1,0 +1,13 @@
+anthropic.claude-code
+dbaeumer.vscode-eslint
+eamodio.gitlens
+editorconfig.editorconfig
+esbenp.prettier-vscode
+james-yu.latex-workshop
+ms-azuretools.vscode-containers
+ms-azuretools.vscode-docker
+ms-ossdata.vscode-postgresql
+ms-vscode-remote.remote-containers
+reditorsupport.r
+reditorsupport.r-syntax
+waderyan.gitblame

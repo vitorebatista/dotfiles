@@ -1,0 +1,7 @@
+{
+    "security.workspace.trust.untrustedFiles": "open",
+    "explorer.confirmDragAndDrop": false,
+    "git.autofetch": true,
+    "claudeCode.preferredLocation": "panel",
+    "git.confirmSync": false
+}
