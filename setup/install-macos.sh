@@ -89,8 +89,12 @@ defaults write com.apple.screencapture location -string "$HOME/Screenshots"
 killall Finder Dock 2>/dev/null || true
 
 # --- Set default shell ---
-if [ "$SHELL" != "$(which zsh)" ]; then
-  chsh -s "$(which zsh)"
+ZSH_PATH="$(which zsh)"
+if [ "$SHELL" != "$ZSH_PATH" ]; then
+  if ! grep -qxF "$ZSH_PATH" /etc/shells; then
+    echo "$ZSH_PATH" | sudo tee -a /etc/shells >/dev/null
+  fi
+  chsh -s "$ZSH_PATH"
 fi
 
 echo ""

@@ -21,8 +21,6 @@ plugins=(
 
 source $ZSH/oh-my-zsh.sh
 
-# asdf
-. $HOME/.asdf/asdf.sh
 
 # NVM
 export NVM_DIR="$HOME/.nvm"
