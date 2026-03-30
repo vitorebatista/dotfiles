@@ -53,6 +53,9 @@ alias dc="docker compose"
 alias dps="docker ps --format 'table {{.Names}}\t{{.Status}}\t{{.Ports}}'"
 alias dclean="docker system prune -af --volumes"
 
+# Claude
+claude-d() { claude --dangerously-skip-permissions "$@"; }
+
 # Safety
 alias rm="rm -I --preserve-root=all"
 alias df="df -h"
