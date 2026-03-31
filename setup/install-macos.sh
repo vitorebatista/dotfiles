@@ -18,7 +18,7 @@ echo "[2/7] Installing packages..."
 brew install \
   zsh git curl wget \
   bat eza fd fzf ripgrep tmux ncdu grc jq httpie \
-  starship zoxide git-delta gh lazygit btop \
+  starship zoxide git-delta gh lazygit btop rtk \
   node python rust
 
 # --- Brew casks ---
