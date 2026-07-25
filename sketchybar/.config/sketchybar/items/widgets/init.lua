@@ -1,4 +1,4 @@
-require("items.widgets.lowpowermode")
+-- require("items.widgets.lowpowermode") -- Low Power Mode toggle (click runs `sudo pmset`; needs passwordless sudo)
 require("items.widgets.secureinput")
 require("items.widgets.battery")
 require("items.widgets.network")
