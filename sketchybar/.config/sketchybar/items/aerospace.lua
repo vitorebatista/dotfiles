@@ -1,12 +1,11 @@
 local colors     = require("colors")
 local settings   = require("settings")
 local app_icons  = require("helpers.app_icons")
-local persist    = require("helpers.layout_persist")
+local profiles   = require("helpers.workspace_profiles")
 local aerospace  = sbar.aerospace
 local workspaces = {}
 local icon_cache = {}
 
-persist.init(aerospace)
 
 -- Global focus state:
 --   focused_workspace               current focused workspace name
@@ -222,7 +221,12 @@ local function reconcileAppItems(spaceId, windows)
         reorderWorkspaces()
     end
 
-    -- 5. Hide the workspace entirely when empty and unfocused
+    -- 5. Adopt a previously unassigned workspace into the active profile
+    if newCount > 0 and profiles.on_nonempty(ws.space_name) then
+        if updateProfilesAnchor then updateProfilesAnchor() end
+    end
+
+    -- 6. Hide the workspace entirely when empty, unfocused, or filtered out
     updateSpaceVisibility(spaceId)
 end
 
@@ -694,11 +698,19 @@ local function createWorkspace(space_name, isFocused, skip_reorder)
     return spaceId
 end
 
+-- Helper: re-evaluate visibility of every workspace (profile switches)
+function refreshAllSpaceVisibility()
+    for spaceId, _ in pairs(workspaces) do
+        updateSpaceVisibility(spaceId)
+    end
+end
+
 -- Helper: hide empty workspaces unless they are focused
 function updateSpaceVisibility(spaceId, focused_name)
     local ws = workspaces[spaceId]
     if not ws then return end
-    local show = (#ws.app_items > 0) or (ws.space_name == (focused_name or focused_workspace))
+    local is_focused = (ws.space_name == (focused_name or focused_workspace))
+    local show = (is_focused or #ws.app_items > 0) and (is_focused or profiles.is_visible(ws.space_name))
     ws.item:set({ drawing = show })
     if ws.bracket then ws.bracket:set({ drawing = show }) end
     ws.padding:set({ drawing = show })
@@ -810,6 +822,10 @@ end
 -- per-item aerospace_workspace_change subscriptions — no duplicate work here.
 workspace_watcher:subscribe("aerospace_workspace_change", function(env)
     focused_workspace = env.FOCUSED_WORKSPACE or ""
+    if profiles.on_focus(focused_workspace) then
+        refreshAllSpaceVisibility()
+        if updateProfilesAnchor then updateProfilesAnchor() end
+    end
     syncWorkspaceList()
 end)
 
@@ -900,13 +916,7 @@ local function fullResync()
                 recolorAppItems(spaceId)
                 updateSpaceWindows(spaceId)
             end
-            -- Re-apply the active layout profile after an AeroSpace restart.
-            -- Settle first: on-window-detected rules re-run windows through
-            -- their static workspace assignment as AeroSpace comes back up,
-            -- and the profile restore must win over that, not race it.
-            sbar.exec("sleep 1", function()
-                persist.apply(persist.get_active())
-            end)
+            refreshAllSpaceVisibility()
         end)
     end)
 end
