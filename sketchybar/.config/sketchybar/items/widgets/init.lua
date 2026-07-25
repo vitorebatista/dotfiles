@@ -1,5 +1,5 @@
 -- require("items.widgets.lowpowermode") -- Low Power Mode toggle (click runs `sudo pmset`; needs passwordless sudo)
 require("items.widgets.secureinput")
-require("items.widgets.battery")
+-- require("items.widgets.battery") -- battery % with popup (charge level + time remaining)
 require("items.widgets.network")
 require("items.widgets.cpu")
