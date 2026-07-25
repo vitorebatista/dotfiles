@@ -28,11 +28,19 @@ Personal development environment configuration for **Ubuntu/Regolith** and **mac
 
 ### AeroSpace (macOS only)
 - Tiling window manager config (i3-like), running the [vitorebatista/AeroSpace](https://github.com/vitorebatista/AeroSpace) fork
-- Sketchybar integration (workspace/app-icon triggers), JankyBorders on startup
+- Window rules match by `app-name-regex-substring` (Slack → S, VS Code → C, Chrome → 9, Brave → 1, WhatsApp → W, Spotify/Music → M; Finder/QuickTime float)
+- JankyBorders on startup; SketchyBar updates are fully event-driven (no exec callbacks in the config)
 
 ### SketchyBar (macOS only)
-- Lua (SbarLua) status bar based on [bin101's config](https://github.com/bin101/dotfiles): event-driven AeroSpace integration (C provider subscribed to the AeroSpace socket — no exec callbacks), per-workspace pills with app icons, layout profiles (save/apply named window layouts), front app, calendar, next-meeting countdown (icalBuddy), battery popup, network speeds, CPU graph + memory, Low Power Mode + Secure Input indicators
-- Deps: `brew install lua luarocks ical-buddy FelixKratz/formulae/sketchybar --cask font-sketchybar-app-font`, `luarocks install luasocket dkjson`, [SbarLua](https://github.com/FelixKratz/SbarLua); build `helpers/` with make
+Lua (SbarLua) status bar based on [bin101's config](https://github.com/bin101/dotfiles), floating-bar style (rounded, translucent, 8px margins).
+
+- **Event-driven AeroSpace integration** — a C provider subscribes to the AeroSpace socket (needs the fork's socket-protocol handshake, fork.8+); workspace/focus/mode/window events stream straight into the bar
+- **Workspace profiles** — profiles are named groups of workspaces (`Personal`, `Work`). The bar shows only the active profile's workspaces; focusing a workspace switches to the profile that owns it; an unassigned workspace is adopted by the active profile when it gets its first window. Managed from the 󰕰 dropdown (create/rename/delete); state in `~/.local/state/aerospace/workspace_profiles.json`
+- **Per-workspace pills** with app icons (empty workspaces hidden unless focused), binding-mode indicator, front app
+- **Right side:** clock (click → Calendar), next-meeting countdown via icalBuddy (`Xmin left · title`, filtered to the work calendar), network up/down with details popup, CPU % + memory % (colored by load, click → Stats), Secure Input padlock warning
+- Battery and Low Power Mode widgets exist but are commented out in `items/widgets/init.lua`
+- Fonts: Hack Nerd Font (SF Pro variant available by flipping `settings.lua` + `helpers/default_font.lua`)
+- Deps: `brew install lua luarocks ical-buddy FelixKratz/formulae/sketchybar --cask font-sketchybar-app-font`, `luarocks install luasocket dkjson`, [SbarLua](https://github.com/FelixKratz/SbarLua); build `helpers/` with make; grant sketchybar Calendars access (for icalBuddy)
 
 ### fastfetch
 - Apple-logo system info preset (`apple.jsonc`)
