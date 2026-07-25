@@ -50,8 +50,8 @@ function M.init()
 	end
 	-- First run: seed with the previously created profile names
 	M.profiles = {
-		Personal = { "W", "9", "8" },
-		Work = { "1", "2", "4", "5", "C", "M", "S" },
+		Personal = { "W", "9", "8", "M" },
+		Work = { "1", "2", "4", "5", "C", "S" },
 	}
 	M.active = "Work"
 	persist()
