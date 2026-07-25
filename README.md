@@ -26,6 +26,10 @@ Personal development environment configuration for **Ubuntu/Regolith** and **mac
 - **Claude Code** plugin configuration
 - **.editorconfig** for cross-editor consistency
 
+### AeroSpace (macOS only)
+- Tiling window manager config (i3-like), running the [vitorebatista/AeroSpace](https://github.com/vitorebatista/AeroSpace) fork
+- Sketchybar integration (workspace/app-icon triggers), JankyBorders on startup
+
 ### Regolith (Linux only)
 - i3xrocks bar: CPU%, Memory%, Disk%, Temperature, Battery, Time
 - Xresources overrides

@@ -11,6 +11,7 @@ This is a dotfiles repository for personal development environment setup.
 - `tmux/` — Terminal multiplexer config
 - `vscode/` — VS Code settings and extensions
 - `claude/` — Claude Code plugin settings
+- `aerospace/` — AeroSpace tiling window manager config (macOS only)
 - `regolith/` — Regolith/i3 desktop config (Linux only)
 - `setup/` — Install scripts for Ubuntu and macOS
 - `bin/` — Custom scripts added to PATH
@@ -41,5 +42,6 @@ When editing any config file managed by this repo (whether from inside `~/dotfil
 - `tmux/.tmux.conf` → `~/.tmux.conf`
 - `vscode/` → `~/.config/Code/User/`
 - `claude/` → `~/.claude/`
+- `aerospace/.aerospace.toml` → `~/.aerospace.toml`
 - `regolith/` → `~/.config/regolith3/`
 - `bin/` → `~/bin/`
