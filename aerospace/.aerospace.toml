@@ -40,6 +40,10 @@ on-mode-changed = [
 # Start AeroSpace at login
 start-at-login = true
 
+# Mouse follows focus when focused monitor changes
+# See https://nikitabobko.github.io/AeroSpace/commands#move-mouse
+on-focused-monitor-changed = ['move-mouse monitor-lazy-center']
+
 # Don't switch workspace when an app activates itself without a preceding mouse click
 # (e.g. WhatsApp stealing focus). Requires >= v0.20.3-Beta-fork.7.
 # DISABLED 2026-07-24: under 'smart', windows moved to another workspace reappeared on the
@@ -53,7 +57,7 @@ enable-normalization-opposite-orientation-for-nested-containers = true
 # See: https://nikitabobko.github.io/AeroSpace/guide#layouts
 # The 'accordion-padding' specifies the size of accordion padding
 # You can set 0 to disable the padding feature
-accordion-padding = 30
+accordion-padding = 8
 
 # Possible values: tiles|accordion
 default-root-container-layout = 'tiles'
@@ -75,8 +79,8 @@ key-mapping.preset = 'qwerty'
 #                 Monitor pattern is the same as for 'workspace-to-monitor-force-assignment'.
 #                 See: https://nikitabobko.github.io/AeroSpace/guide#assign-workspaces-to-monitors
 [gaps]
-inner.horizontal = 0
-inner.vertical =   0
+inner.horizontal = 12
+inner.vertical =   12
 outer.left =       0
 outer.bottom =     0
 outer.top =        12  # keep windows below sketchybar
@@ -220,6 +224,15 @@ alt-shift-j = ['join-with down', 'mode main']
 alt-shift-k = ['join-with up', 'mode main']
 alt-shift-l = ['join-with right', 'mode main']
 
+
+# Small utility windows tile awkwardly — keep them floating
+[[on-window-detected]]
+if.app-id = 'com.apple.finder'
+run = 'layout floating'
+
+[[on-window-detected]]
+if.app-id = 'com.apple.QuickTimePlayerX'
+run = 'layout floating'
 
 [[on-window-detected]]
 if.app-id = 'net.whatsapp.WhatsApp'
