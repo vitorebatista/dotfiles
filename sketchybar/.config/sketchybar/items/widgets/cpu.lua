@@ -87,8 +87,47 @@ memory:subscribe("mouse.clicked", function(env)
   sbar.exec("open -a Stats", function() end)
 end)
 
+-- Disk usage, sharing the CPU island
+local disk = sbar.add("item", "widgets.disk", {
+  position = "right",
+  update_freq = 300,
+  background = {
+    height = 22,
+    color = { alpha = 0 },
+    border_color = { alpha = 0 },
+    drawing = true,
+  },
+  icon = {
+    string = "󰋊",
+    color = colors.blue,
+    padding_right = settings.paddings + 3,
+  },
+  label = {
+    string = "??%",
+    align = "left",
+    padding_left = 0,
+  },
+  padding_right = settings.paddings + 6,
+})
+
+disk:subscribe({ "routine", "forced", "system_woke" }, function(env)
+  sbar.exec("df /System/Volumes/Data | awk 'NR==2 {gsub(\"%\",\"\",$5); print $5}'", function(out)
+    local pct = tonumber(tostring(out):match("%d+"))
+    if pct then
+      disk:set({
+        icon = { color = load_color(pct) },
+        label = pct .. "%",
+      })
+    end
+  end)
+end)
+
+disk:subscribe("mouse.clicked", function(env)
+  sbar.exec("open -a Stats", function() end)
+end)
+
 -- Background around the cpu island
-sbar.add("bracket", "widgets.cpu.bracket", { cpu.name, memory.name }, {
+sbar.add("bracket", "widgets.cpu.bracket", { cpu.name, memory.name, disk.name }, {
   background = { color = colors.bg1 }
 })
 
