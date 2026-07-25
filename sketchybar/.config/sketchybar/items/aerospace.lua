@@ -221,6 +221,9 @@ local function reconcileAppItems(spaceId, windows)
         rebuildBracket(spaceId)
         reorderWorkspaces()
     end
+
+    -- 5. Hide the workspace entirely when empty and unfocused
+    updateSpaceVisibility(spaceId)
 end
 
 -- ─── spatial window ordering ──────────────────────────────────────────────────
@@ -667,6 +670,7 @@ local function createWorkspace(space_name, isFocused, skip_reorder)
         space_bracket_update(spaceId, nowFocused)
         -- Re-colour all app items for this workspace (WS brightness changed)
         recolorAppItems(spaceId)
+        updateSpaceVisibility(spaceId, env.FOCUSED_WORKSPACE)
     end)
 
     space:subscribe("mouse.clicked", function()
@@ -688,6 +692,16 @@ local function createWorkspace(space_name, isFocused, skip_reorder)
     end
 
     return spaceId
+end
+
+-- Helper: hide empty workspaces unless they are focused
+function updateSpaceVisibility(spaceId, focused_name)
+    local ws = workspaces[spaceId]
+    if not ws then return end
+    local show = (#ws.app_items > 0) or (ws.space_name == (focused_name or focused_workspace))
+    ws.item:set({ drawing = show })
+    if ws.bracket then ws.bracket:set({ drawing = show }) end
+    ws.padding:set({ drawing = show })
 end
 
 -- Helper: update bracket border when WS focus changes
