@@ -102,9 +102,15 @@ PATH = '/opt/homebrew/bin:/opt/homebrew/sbin:${PATH}'
 
 # All possible commands: https://nikitabobko.github.io/AeroSpace/commands
 
-# You can uncomment this line to open up terminal with alt + enter shortcut
-# See: https://nikitabobko.github.io/AeroSpace/commands#exec-and-forget
-alt-enter = 'exec-and-forget open -n /System/Applications/Utilities/Terminal.app'
+# Open a NEW Terminal window (AppleScript — `open -a/-n` would instead focus an
+# existing instance or spawn a whole second app instance).
+# See: https://nikitabobko.github.io/AeroSpace/goodies#open-a-new-window-with-applescript
+alt-enter = '''exec-and-forget osascript -e '
+tell application "Terminal"
+    do script
+    activate
+end tell'
+'''
 
 # See: https://nikitabobko.github.io/AeroSpace/commands#layout
 alt-slash = 'layout tiles horizontal vertical'
