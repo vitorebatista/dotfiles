@@ -1,8 +1,16 @@
 local colors = require("colors")
 
+-- Floating bar style (from the previous wady-based config):
+-- margins + y_offset + rounded corners + subtle border
 sbar.bar({
   height = 32,
   color = colors.bar.bg,
-  padding_left = 2,
-  padding_right = 2,
+  padding_left = 1,
+  padding_right = 0,
+  margin = 8,
+  y_offset = 6,
+  corner_radius = 10,
+  border_width = 1,
+  border_color = colors.bar.border,
+  blur_radius = 12,
 })

@@ -11,9 +11,9 @@ return {
   transparent = 0x00000000,
 
   bar = {
-    -- bg = 0xc02c2e34,
-    bg = 0x00000000,
-    border = 0xff2c2e34,
+    -- translucent dark, matches the previous floating-bar look
+    bg = 0xb3202020,
+    border = 0x35e2e2e3,
   },
   popup = {
     bg = 0xc02c2e34,
