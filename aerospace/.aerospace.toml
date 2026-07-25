@@ -227,11 +227,11 @@ alt-shift-l = ['join-with right', 'mode main']
 
 # Small utility windows tile awkwardly — keep them floating
 [[on-window-detected]]
-if.app-id = 'com.apple.finder'
+if.app-name-regex-substring = 'finder'
 run = 'layout floating'
 
 [[on-window-detected]]
-if.app-id = 'com.apple.QuickTimePlayerX'
+if.app-name-regex-substring = 'quicktime'
 run = 'layout floating'
 
 [[on-window-detected]]
@@ -239,23 +239,23 @@ if.app-name-regex-substring = 'slack'
 run = 'move-node-to-workspace S'
 
 [[on-window-detected]]
-if.app-id = 'net.whatsapp.WhatsApp'
+if.app-name-regex-substring = 'whatsapp'
 run = 'move-node-to-workspace W'
 
 [[on-window-detected]]
-if.app-id = 'com.microsoft.VSCode'
+if.app-name-regex-substring = '^code'
 run = 'move-node-to-workspace C'
 
 [[on-window-detected]]
-if.app-id = 'com.spotify.client'
+if.app-name-regex-substring = 'spotify'
 run = 'move-node-to-workspace M'
 
 [[on-window-detected]]
-if.app-id = 'com.google.Chrome'
+if.app-name-regex-substring = 'chrome'
 run = 'move-node-to-workspace 9'
 
 [[on-window-detected]]
-if.app-id = 'com.brave.Browser'
+if.app-name-regex-substring = 'brave'
 run = 'move-node-to-workspace 1'
 
 [workspace-to-monitor-force-assignment]
