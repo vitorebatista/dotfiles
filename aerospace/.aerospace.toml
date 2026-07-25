@@ -250,6 +250,11 @@ run = 'move-node-to-workspace C'
 if.app-name-regex-substring = 'spotify'
 run = 'move-node-to-workspace M'
 
+# Apple Music (app name is just "Music" — anchored to avoid matching other apps)
+[[on-window-detected]]
+if.app-name-regex-substring = '^music$'
+run = 'move-node-to-workspace M'
+
 [[on-window-detected]]
 if.app-name-regex-substring = 'chrome'
 run = 'move-node-to-workspace 9'
