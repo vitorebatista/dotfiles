@@ -1,26 +1,25 @@
-local settings = require("settings")
 local colors = require("colors")
+local settings = require("settings")
 
--- Native next-meeting item via icalBuddy (Bartender hides MeetingBar's menu-bar
--- item off-screen, so a sketchybar alias of it captures blank).
--- Only events from the vitor.batista@trustedhealth.com calendar are considered.
+-- Next-meeting item via icalBuddy (Bartender hides MeetingBar's menu-bar item
+-- off-screen, so an alias of it captures blank). Only events from the
+-- vitor.batista@trustedhealth.com calendar are considered.
+-- Shows "HH:MM · Title" before the meeting and "Xmin left · Title" during it.
 local ICALBUDDY = "/opt/homebrew/bin/icalBuddy"
 local QUERY = ICALBUDDY
 	.. " -ic 'vitor.batista@trustedhealth.com'"
 	.. " -n -li 1 -b '' -nc -ps '| . |' -iep 'datetime,title' -po 'datetime,title' -tf '%H:%M' -df '' eventsToday"
 
-local meeting = sbar.add("item", "meeting", {
+local meeting = sbar.add("item", "widgets.meeting", {
 	position = "right",
 	update_freq = 60,
 	icon = {
 		string = "󰃰",
 		color = colors.white,
-		font = settings.label_font,
 		padding_left = 8,
 	},
 	label = {
 		color = colors.white,
-		font = settings.label_font,
 		padding_left = 4,
 		padding_right = 8,
 		max_chars = 40,
@@ -30,13 +29,13 @@ local meeting = sbar.add("item", "meeting", {
 	click_script = "open -a Calendar",
 })
 
-sbar.add("bracket", { meeting.name }, {
-	background = colors.island,
+sbar.add("bracket", "widgets.meeting.bracket", { meeting.name }, {
+	background = { color = colors.bg1 },
 })
 
-sbar.add("item", "meeting.right.padding", {
+sbar.add("item", "widgets.meeting.padding", {
 	position = "right",
-	width = settings.group_padding,
+	width = settings.group_paddings,
 })
 
 meeting:subscribe({ "forced", "routine", "system_woke" }, function(env)

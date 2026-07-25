@@ -31,8 +31,8 @@ Personal development environment configuration for **Ubuntu/Regolith** and **mac
 - Sketchybar integration (workspace/app-icon triggers), JankyBorders on startup
 
 ### SketchyBar (macOS only)
-- Lua (SbarLua) status bar based on [wadyyyyy's template](https://github.com/wadyyyyy/dotfiles): AeroSpace workspace + app icons, front app, calendar, next-meeting countdown (icalBuddy), battery, CPU+memory, Secure Input warning
-- Deps: `brew install lua ical-buddy FelixKratz/formulae/sketchybar --cask font-sketchybar-app-font` + [SbarLua](https://github.com/FelixKratz/SbarLua); build `helpers/` with make
+- Lua (SbarLua) status bar based on [bin101's config](https://github.com/bin101/dotfiles): event-driven AeroSpace integration (C provider subscribed to the AeroSpace socket — no exec callbacks), per-workspace pills with app icons, layout profiles (save/apply named window layouts), front app, calendar, next-meeting countdown (icalBuddy), battery popup, network speeds, CPU graph + memory, Low Power Mode + Secure Input indicators
+- Deps: `brew install lua luarocks ical-buddy FelixKratz/formulae/sketchybar --cask font-sketchybar-app-font`, `luarocks install luasocket dkjson`, [SbarLua](https://github.com/FelixKratz/SbarLua); build `helpers/` with make
 
 ### fastfetch
 - Apple-logo system info preset (`apple.jsonc`)

@@ -2,103 +2,110 @@ local icons = require("icons")
 local colors = require("colors")
 local settings = require("settings")
 
-sbar.exec(
-	string.format(
-		"killall cpu_load >/dev/null; $CONFIG_DIR/helpers/event_providers/cpu_load/bin/cpu_load cpu_update %.1f",
-		settings.widgets.cpu.poll_seconds
-	)
-)
+-- Execute the event provider binary which provides the event "cpu_update" for
+-- the cpu load data, which is fired every 2.0 seconds.
+sbar.exec("killall cpu_load >/dev/null; $CONFIG_DIR/helpers/event_providers/cpu_load/bin/cpu_load cpu_update 2.0", function() end)
 
-local cpu = sbar.add("item", "widgets.cpu", {
-	click_script = "open -a Stats",
-	position = "right",
-	background = {
-		height = settings.ui.item_height,
-		color = { alpha = 0 },
-		border_color = { alpha = 0 },
-		drawing = true,
-	},
-	icon = {
-		string = icons.cpu,
-		color = colors.blue,
-		padding_right = settings.paddings + 3,
-	},
-	label = {
-		string = "cpu ??%",
-		font = settings.label_font,
-		align = "left",
-		padding_left = 0,
-		width = settings.widgets.cpu.label_width,
-	},
-	padding_right = settings.paddings,
+local cpu = sbar.add("graph", "widgets.cpu" , 42, {
+  position = "right",
+  graph = { color = colors.blue },
+  background = {
+    height = 22,
+    color = { alpha = 0 },
+    border_color = { alpha = 0 },
+    drawing = true,
+  },
+  icon = { string = icons.cpu },
+  label = {
+    string = "cpu ??%",
+    font = {
+      family = settings.font.numbers,
+      style = settings.font.style_map["Bold"],
+      size = 9.0,
+    },
+    align = "right",
+    padding_right = 0,
+    width = 0,
+    y_offset = 4
+  },
+  padding_right = settings.paddings + 6
 })
 
-local function get_cpu_color(load)
-	local thresholds = settings.widgets.cpu.thresholds
-	if load > thresholds.critical then
-		return colors.red
-	end
-	if load > thresholds.high then
-		return colors.orange
-	end
-	if load > thresholds.medium then
-		return colors.yellow
-	end
-	return colors.blue
-end
-
 cpu:subscribe("cpu_update", function(env)
-	local load = tonumber(env.total_load)
+  -- Also available: env.user_load, env.sys_load
+  local load = tonumber(env.total_load)
+  cpu:push({ load / 100. })
 
-	cpu:set({
-		icon = { color = get_cpu_color(load) },
-		label = env.total_load .. "%",
-	})
+  local color = colors.blue
+  if load > 30 then
+    if load < 60 then
+      color = colors.yellow
+    elseif load < 80 then
+      color = colors.orange
+    else
+      color = colors.red
+    end
+  end
+
+  cpu:set({
+    graph = { color = color },
+    label = "cpu " .. env.total_load .. "%",
+  })
 end)
+
+cpu:subscribe("mouse.clicked", function(env)
+  sbar.exec("open -a Stats", function() end)
+end)
+
 
 -- Memory usage, sharing the CPU island
 local memory = sbar.add("item", "widgets.memory", {
-	click_script = "open -a Stats",
-	position = "right",
-	update_freq = 10,
-	background = {
-		height = settings.ui.item_height,
-		color = { alpha = 0 },
-		border_color = { alpha = 0 },
-		drawing = true,
-	},
-	icon = {
-		string = "󰍛",
-		color = colors.blue,
-		padding_right = settings.paddings + 3,
-	},
-	label = {
-		string = "??%",
-		font = settings.label_font,
-		align = "left",
-		padding_left = 0,
-		width = settings.widgets.cpu.label_width,
-	},
-	padding_right = settings.paddings,
+  position = "right",
+  update_freq = 10,
+  background = {
+    height = 22,
+    color = { alpha = 0 },
+    border_color = { alpha = 0 },
+    drawing = true,
+  },
+  icon = { string = "󰍛" },
+  label = {
+    string = "mem ??%",
+    font = {
+      family = settings.font.numbers,
+      style = settings.font.style_map["Bold"],
+      size = 9.0,
+    },
+  },
+  padding_right = settings.paddings + 6,
 })
 
 memory:subscribe({ "routine", "forced", "system_woke" }, function(env)
-	sbar.exec("memory_pressure -Q | awk '/percentage/ {print 100-$5}'", function(out)
-		local pct = tonumber(tostring(out):match("%d+"))
-		if pct then
-			memory:set({
-				icon = { color = get_cpu_color(pct) },
-				label = pct .. "%",
-			})
-		end
-	end)
+  sbar.exec("memory_pressure -Q | awk '/percentage/ {print 100-$5}'", function(out)
+    local pct = tonumber(tostring(out):match("%d+"))
+    if pct then
+      local color = colors.blue
+      if pct > 60 then
+        if pct < 80 then color = colors.yellow
+        elseif pct < 90 then color = colors.orange
+        else color = colors.red end
+      end
+      memory:set({ label = { string = "mem " .. pct .. "%", color = color } })
+    end
+  end)
 end)
 
+memory:subscribe("mouse.clicked", function(env)
+  sbar.exec("open -a Stats", function() end)
+end)
+
+-- Background around the cpu island
 sbar.add("bracket", "widgets.cpu.bracket", { cpu.name, memory.name }, {
-	background = colors.island,
+  background = { color = colors.bg1 }
 })
 
+-- Background around the cpu item
 sbar.add("item", "widgets.cpu.padding", {
-	position = "right",
-	width = settings.group_padding,
+  position = "right",
+  width = settings.group_paddings
 })

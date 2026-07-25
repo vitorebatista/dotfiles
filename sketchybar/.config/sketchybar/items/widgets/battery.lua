@@ -3,69 +3,100 @@ local colors = require("colors")
 local settings = require("settings")
 
 local battery = sbar.add("item", "widgets.battery", {
-	click_script = "open 'x-apple.systempreferences:com.apple.Battery-Settings.extension'",
-	position = "right",
-	icon = {
-		font = {
-			style = settings.font.style_map["Regular"],
-			size = settings.font_sizes.icon_large,
-		},
-	},
-	label = { font = settings.label_font },
-	update_freq = settings.widgets.battery.update_freq,
+  position = "right",
+  icon = {
+    font = {
+      style = settings.font.style_map["Regular"],
+      size = 19.0,
+    }
+  },
+  label = { font = { family = settings.font.numbers } },
+  update_freq = 180,
+  popup = { align = "center" }
 })
 
-battery:subscribe({ "routine", "power_source_change", "system_woke" }, function()
-	sbar.exec("pmset -g batt", function(batt_info)
-		local icon = "!"
-		local label = "?"
+local remaining_time = sbar.add("item", "widgets.battery.remaining_time", {
+  position = "popup." .. battery.name,
+  icon = {
+    string = "Time remaining:",
+    width = 100,
+    align = "left"
+  },
+  label = {
+    string = "??:??h",
+    width = 100,
+    align = "right"
+  },
+})
 
-		local found, _, charge = batt_info:find("(%d+)%%")
-		if found then
-			charge = tonumber(charge)
-			label = charge .. "%"
-		end
+-- Track popup state locally to avoid blocking battery:query() calls
+local popup_open = false
 
-		local color = colors.white
-		local charging, _, _ = batt_info:find("AC Power")
+battery:subscribe({"routine", "power_source_change", "system_woke"}, function()
+  sbar.exec("pmset -g batt", function(batt_info)
+    local icon = "!"
+    local label = "?"
 
-		if charging then
-			icon = icons.battery.charging
-		else
-			if found and charge > 80 then
-				icon = icons.battery._100
-			elseif found and charge > 60 then
-				icon = icons.battery._75
-			elseif found and charge > 40 then
-				icon = icons.battery._50
-			elseif found and charge > 20 then
-				icon = icons.battery._25
-			else
-				icon = icons.battery._0
-				color = colors.red
-			end
-		end
+    local found, _, charge = batt_info:find("(%d+)%%")
+    if found then
+      charge = tonumber(charge)
+      label = charge .. "%"
+    end
 
-		local lead = ""
-		if found and charge < 10 then
-			lead = "0"
-		end
+    local color = colors.green
+    local charging, _, _ = batt_info:find("AC Power")
 
-		battery:set({
-			icon = {
-				string = icon,
-				color = color,
-			},
-			label = { string = lead .. label },
-		})
-	end)
+    if charging then
+      icon = icons.battery.charging
+    else
+      if found and charge > 80 then
+        icon = icons.battery._100
+      elseif found and charge > 60 then
+        icon = icons.battery._75
+      elseif found and charge > 40 then
+        icon = icons.battery._50
+      elseif found and charge > 20 then
+        icon = icons.battery._25
+        color = colors.orange
+      else
+        icon = icons.battery._0
+        color = colors.red
+      end
+    end
+
+    local lead = ""
+    if found and charge < 10 then
+      lead = "0"
+    end
+
+    battery:set({
+      icon = {
+        string = icon,
+        color = color
+      },
+      label = { string = lead .. label },
+    })
+  end)
+end)
+
+battery:subscribe("mouse.clicked", function(env)
+  popup_open = not popup_open
+  battery:set({ popup = { drawing = popup_open } })
+
+  if popup_open then
+    sbar.exec("pmset -g batt", function(batt_info)
+      local found, _, remaining = batt_info:find(" (%d+:%d+) remaining")
+      local label = found and remaining .. "h" or "No estimate"
+      remaining_time:set({ label = label })
+    end)
+  end
 end)
 
 sbar.add("bracket", "widgets.battery.bracket", { battery.name }, {
-	background = colors.island,
+  background = { color = colors.bg1 }
 })
 
 sbar.add("item", "widgets.battery.padding", {
-	position = "right",
-	width = settings.group_padding,
+  position = "right",
+  width = settings.group_paddings
 })
