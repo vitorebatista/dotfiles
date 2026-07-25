@@ -1,0 +1,130 @@
+{
+  "$schema": "https://github.com/fastfetch-cli/fastfetch/raw/master/doc/json_schema.json",
+  "logo": {
+    "padding": {
+      "top": 2,
+      "left": 3
+    }
+  },
+  "display": {
+    "separator": "",
+    "constants": [
+      "───────────────" // {$1}
+    ],
+    "key": {
+      "width": 12
+    }
+  },
+  "modules": [
+    {
+      "type": "custom",
+      "format": "{#90}─{$1}{$1} Software {$1}{$1}{#}"
+    },
+    {
+      "key": "󰀵 OS",
+      "type": "os",
+      "keyColor": "33"
+    },
+    {
+      "key": "󰅚 Kernel",
+      "type": "kernel",
+      "keyColor": "93"
+    },
+    {
+      "key": "󱆃 Shell",
+      "type": "shell",
+      "keyColor": "34"
+    },
+    {
+      "key": "󱂬 WM",
+      "type": "wm"
+    },
+    {
+      "key": " Terminal",
+      "type": "terminal",
+      "keyColor": "94"
+    },
+    {
+      "key": " Locale",
+      "type": "locale",
+      "keyColor": "36"
+    },
+    {
+      "key": "󰬴 Font",
+      "type": "terminalfont",
+      "keyColor": "33"
+    },
+    {
+      "type": "custom",
+      "format": "{#90}─{$1}{$1}────────────────────────{$1}─{#}"
+    },
+    {
+      "type": "custom",
+      "format": "{#90}─{$1}{$1} Hardware {$1}{$1}{#}"
+    },
+    {
+      "key": " Host",
+      "type": "host",
+      "keyColor": "31"
+    },
+    {
+      "key": "󰍹 Display",
+      "type": "display",
+      "keyColor": "34"
+    },
+    {
+      "key": " CPU",
+      "type": "cpu",
+      "keyColor": "33"
+    },
+    {
+      "key": "󰢮 GPU",
+      "type": "gpu",
+      "keyColor": "32"
+    },
+    {
+      "key": " Memory",
+      "type": "memory",
+      "keyColor": "31"
+    },
+    {
+      "key": "󰓡 Swap",
+      "type": "swap",
+      "keyColor": "95"
+    },
+    {
+      "key": " Disk",
+      "type": "disk",
+      "folders": "/",
+      "keyColor": "34"
+    },
+    {
+      "key": " Battery",
+      "type": "battery",
+      "keyColor": "92"
+    },
+    {
+      "type": "custom",
+      "format": "{#90}─{$1}{$1}────────────────────────{$1}─{#}"
+    },
+    {
+      "type": "custom",
+      "format": "{#90}───{$1}{$1} Misc {$1}{$1}──{#}"
+    },
+    {
+      "key": "󱎫 Uptime",
+      "type": "uptime",
+      "keyColor": "35"
+    },
+    {
+      "key": " Packages",
+      "type": "packages",
+      "keyColor": "91"
+    },
+    {
+      "type": "custom",
+      "format": "{#90}─{$1}{$1}────────────────────────{$1}─{#}"
+    },
+    "colors"
+  ]
+}

@@ -12,6 +12,8 @@ This is a dotfiles repository for personal development environment setup.
 - `vscode/` — VS Code settings and extensions
 - `claude/` — Claude Code plugin settings
 - `aerospace/` — AeroSpace tiling window manager config (macOS only)
+- `sketchybar/` — SketchyBar status bar, Lua/SbarLua config (macOS only; needs SbarLua, lua, sketchybar-app-font)
+- `fastfetch/` — fastfetch system-info config
 - `regolith/` — Regolith/i3 desktop config (Linux only)
 - `setup/` — Install scripts for Ubuntu and macOS
 - `bin/` — Custom scripts added to PATH
@@ -43,5 +45,7 @@ When editing any config file managed by this repo (whether from inside `~/dotfil
 - `vscode/` → `~/.config/Code/User/`
 - `claude/` → `~/.claude/`
 - `aerospace/.aerospace.toml` → `~/.aerospace.toml`
+- `sketchybar/.config/sketchybar/` → `~/.config/sketchybar/` (run `make` in `helpers/` after install; `config.jsonc` for fastfetch is a symlink to `apple.jsonc`)
+- `fastfetch/.config/fastfetch/` → `~/.config/fastfetch/`
 - `regolith/` → `~/.config/regolith3/`
 - `bin/` → `~/bin/`

@@ -30,6 +30,13 @@ Personal development environment configuration for **Ubuntu/Regolith** and **mac
 - Tiling window manager config (i3-like), running the [vitorebatista/AeroSpace](https://github.com/vitorebatista/AeroSpace) fork
 - Sketchybar integration (workspace/app-icon triggers), JankyBorders on startup
 
+### SketchyBar (macOS only)
+- Lua (SbarLua) status bar based on [wadyyyyy's template](https://github.com/wadyyyyy/dotfiles): AeroSpace workspace + app icons, front app, calendar, next-meeting countdown (icalBuddy), battery, CPU+memory, Secure Input warning
+- Deps: `brew install lua ical-buddy FelixKratz/formulae/sketchybar --cask font-sketchybar-app-font` + [SbarLua](https://github.com/FelixKratz/SbarLua); build `helpers/` with make
+
+### fastfetch
+- Apple-logo system info preset (`apple.jsonc`)
+
 ### Regolith (Linux only)
 - i3xrocks bar: CPU%, Memory%, Disk%, Temperature, Battery, Time
 - Xresources overrides
