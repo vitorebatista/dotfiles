@@ -50,5 +50,7 @@ sbar.default({
   },
   padding_left = 5,
   padding_right = 5,
-  scroll_texts = true,
+  -- scroll_texts + lock/unlock is a known crash vector (SketchyBar #760) and our
+  -- labels are short/capped, so scrolling gains nothing.
+  scroll_texts = false,
 })
