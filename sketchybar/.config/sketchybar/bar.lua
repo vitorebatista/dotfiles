@@ -12,5 +12,7 @@ sbar.bar({
   corner_radius = 10,
   border_width = 1,
   border_color = colors.bar.border,
-  blur_radius = 12,
+  -- blur_radius costs a lot to recomposite on every display rebuild (lock/wake
+  -- churn: SketchyBar #336). Re-enable if the wake stall is gone and you miss it.
+  -- blur_radius = 12,
 })
