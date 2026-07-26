@@ -93,9 +93,10 @@ PATH = '/opt/homebrew/bin:/opt/homebrew/sbin:${PATH}'
 cmd-h = []     # Disable "hide application"
 cmd-alt-h = [] # Disable "hide others"
 
-# Interactive screenshot straight to the clipboard
-# See: https://nikitabobko.github.io/AeroSpace/goodies#screenshoot-shortcut
-alt-shift-s = 'exec-and-forget screencapture -i -c'
+# Interactive screenshot straight to the clipboard, with Flameshot's annotation
+# editor. Full path: /opt/homebrew/bin is on PATH but flameshot ships app-only.
+# Plain macOS alternative: 'exec-and-forget screencapture -i -c'
+alt-shift-s = 'exec-and-forget /Applications/flameshot.app/Contents/MacOS/flameshot gui -c'
 
 # All possible keys:
 # - Letters.        a, b, c, ..., z
