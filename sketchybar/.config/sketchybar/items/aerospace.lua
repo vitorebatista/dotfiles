@@ -829,10 +829,21 @@ end
 -- Sync the workspace list against AeroSpace. focused_workspace must already be
 -- up to date. Only calls reorderWorkspaces() when a workspace was added.
 -- (removeWorkspace calls it internally for removals.)
-local function syncWorkspaceList()
+local nonempty_workspaces = {}   -- space_name -> true (refreshed per sync)
+
+-- A workspace earns bar items only while it has windows or is focused, and only
+-- if the active profile owns it (or nobody does).
+local function shouldShowWorkspace(space_name)
+    if space_name == focused_workspace then return true end
+    if not nonempty_workspaces[space_name] then return false end
+    return profiles.is_visible(space_name)
+end
+
+local function syncWorkspaceListInner()
     aerospace:list_workspaces_all(function(allWorkspaces)
         local current_spaces = {}
         local added          = false
+        local removed_any    = false
         local became_visible = {}  -- spaceIds that just transitioned hidden → visible
 
         for _, ws_info in ipairs(allWorkspaces) do
@@ -843,6 +854,16 @@ local function syncWorkspaceList()
             local was_visible = visible_by_workspace[space_name]
             visible_by_workspace[space_name] = is_visible
 
+            if not shouldShowWorkspace(space_name) then
+                -- Not shown: make sure it owns no items at all (cheap bar = fast wake)
+                if workspaces[spaceId] then
+                    removeWorkspace(spaceId)
+                    removed_any = true
+                end
+                current_spaces[spaceId] = true
+                goto continue
+            end
+
             if not workspaces[spaceId] then
                 createWorkspace(space_name, (space_name == focused_workspace), true)
                 added = true
@@ -851,9 +872,10 @@ local function syncWorkspaceList()
                 table.insert(became_visible, spaceId)
             end
             current_spaces[spaceId] = true
+            ::continue::
         end
 
-        local removed = false
+        local removed = removed_any
         for spaceId, _ in pairs(workspaces) do
             if not current_spaces[spaceId] then
                 removeWorkspace(spaceId)
@@ -868,6 +890,19 @@ local function syncWorkspaceList()
         for _, spaceId in ipairs(became_visible) do
             if workspaces[spaceId] then updateSpaceWindows(spaceId) end
         end
+    end)
+end
+
+-- Refresh the non-empty workspace set (one cheap shell call), then sync.
+-- Async: never blocks the config process, which is what a locked screen exposes.
+local function syncWorkspaceList()
+    sbar.exec("/opt/homebrew/bin/aerospace list-workspaces --monitor all --empty no 2>/dev/null", function(out)
+        local set = {}
+        for name in tostring(out or ""):gmatch("[^\r\n]+") do
+            set[(name:gsub("^%s+", ""):gsub("%s+$", ""))] = true
+        end
+        nonempty_workspaces = set
+        syncWorkspaceListInner()
     end)
 end
 
@@ -895,17 +930,11 @@ end)
 
 -- Window focus changed: re-seed and re-colour.
 -- space_windows_change is handled per-item (each workspace reconciles itself).
--- On wake, re-seed focus and reconcile every workspace: events that happened
--- while the machine slept are gone, and this fills the pills in immediately.
-workspace_watcher:subscribe("system_woke", function()
-    syncWorkspaceList()
-    seedFocusedWindow(function()
-        for spaceId, _ in pairs(workspaces) do
-            updateSpaceWindows(spaceId)
-        end
-        refreshAllSpaceVisibility()
-    end)
-end)
+-- Deliberately NO system_woke full resync here: reconciling every workspace at
+-- wake piles subprocesses and hundreds of --set messages onto a daemon that is
+-- already busy rebuilding its windows, which is what makes the bar look frozen.
+-- The aerospace_events provider stays connected across sleep, so the next real
+-- event reconciles anyway.
 
 workspace_watcher:subscribe({"aerospace_focus_change", "front_app_switched"}, function()
     seedFocusedWindow(function(ws_name)

@@ -3,9 +3,9 @@ local colors = require("colors")
 
 -- Equivalent to the --default domain
 sbar.default({
-  -- "when_shown" stops updates while the bar is hidden (e.g. screen locked), so
-  -- everything re-queries on unlock and visibly pops in one item at a time.
-  updates = true,
+  -- Stay idle while the bar is hidden (screen locked): updating 148 items into a
+  -- dark display only queues work that all floods in at unlock.
+  updates = "when_shown",
   icon = {
     font = {
       family = settings.font.text,
