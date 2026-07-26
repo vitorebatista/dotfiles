@@ -895,6 +895,18 @@ end)
 
 -- Window focus changed: re-seed and re-colour.
 -- space_windows_change is handled per-item (each workspace reconciles itself).
+-- On wake, re-seed focus and reconcile every workspace: events that happened
+-- while the machine slept are gone, and this fills the pills in immediately.
+workspace_watcher:subscribe("system_woke", function()
+    syncWorkspaceList()
+    seedFocusedWindow(function()
+        for spaceId, _ in pairs(workspaces) do
+            updateSpaceWindows(spaceId)
+        end
+        refreshAllSpaceVisibility()
+    end)
+end)
+
 workspace_watcher:subscribe({"aerospace_focus_change", "front_app_switched"}, function()
     seedFocusedWindow(function(ws_name)
         for spaceId, _ in pairs(workspaces) do

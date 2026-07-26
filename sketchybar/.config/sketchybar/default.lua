@@ -3,7 +3,9 @@ local colors = require("colors")
 
 -- Equivalent to the --default domain
 sbar.default({
-  updates = "when_shown",
+  -- "when_shown" stops updates while the bar is hidden (e.g. screen locked), so
+  -- everything re-queries on unlock and visibly pops in one item at a time.
+  updates = true,
   icon = {
     font = {
       family = settings.font.text,
