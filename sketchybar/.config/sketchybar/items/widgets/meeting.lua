@@ -13,6 +13,9 @@ local QUERY = ICALBUDDY
 local meeting = sbar.add("item", "widgets.meeting", {
 	position = "right",
 	update_freq = 60,
+	-- hides itself when there is no event; needs always-on updates so it can
+	-- come back (default.lua's "when_shown" would freeze it while hidden)
+	updates = true,
 	icon = {
 		string = "󰃰",
 		color = colors.white,

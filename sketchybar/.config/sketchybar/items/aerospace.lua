@@ -10,6 +10,7 @@ local icon_cache = {}
 -- Name of the always-on layout snapshot used to restore window placement
 -- after an AeroSpace restart (see helpers/layout_persist.lua).
 local AUTO_LAYOUT = "autosave"
+local FOCUS_FILE  = os.getenv("HOME") .. "/.local/state/aerospace/last_focused"
 
 layout.init(aerospace)
 
@@ -20,6 +21,9 @@ layout.init(aerospace)
 local layout_autosave = sbar.add("item", "aerospace.layout_autosave", {
     drawing     = false,
     update_freq = 120,
+    -- default.lua sets updates = "when_shown"; this item is never drawn, so it
+    -- must opt into always-on updates or its routine tick never fires.
+    updates     = true,
 })
 
 layout_autosave:subscribe({ "routine", "forced" }, function()
@@ -28,6 +32,10 @@ layout_autosave:subscribe({ "routine", "forced" }, function()
         local distinct = tonumber(tostring(out):match("%d+")) or 0
         if distinct <= 1 then return end
         layout.save(AUTO_LAYOUT)
+        -- Remember the focused workspace too: AeroSpace picks its own on
+        -- startup, which would otherwise flip the active profile.
+        sbar.exec("/opt/homebrew/bin/aerospace list-workspaces --focused > "
+            .. FOCUS_FILE .. " 2>/dev/null", function() end)
     end)
 end)
 
@@ -948,6 +956,24 @@ local function fullResync()
             -- re-run as AeroSpace comes back up) don't race the restore.
             sbar.exec("sleep 2", function()
                 layout.apply(AUTO_LAYOUT)
+                -- layout.apply moves windows over synchronous socket calls; the
+                -- resulting move events can be missed while the resync is still
+                -- settling, so reconcile every workspace explicitly afterwards.
+                syncWorkspaceList()
+                for spaceId, _ in pairs(workspaces) do
+                    updateSpaceWindows(spaceId)
+                end
+                sbar.exec("sleep 1", function()
+                    refreshAllSpaceVisibility()
+                    -- Restore the workspace that was focused before the restart;
+                    -- the profile filter then follows from the focus event.
+                    sbar.exec("cat " .. FOCUS_FILE .. " 2>/dev/null", function(out)
+                        local ws = tostring(out or ""):match("[^\r\n]+")
+                        if ws and ws ~= "" then
+                            pcall(function() aerospace:workspace(ws) end)
+                        end
+                    end)
+                end)
             end)
         end)
     end)
