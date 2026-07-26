@@ -26,11 +26,21 @@ local layout_autosave = sbar.add("item", "aerospace.layout_autosave", {
     updates     = true,
 })
 
-layout_autosave:subscribe({ "routine", "forced" }, function()
+-- Event-driven, not timer-driven: the routine tick does not resume after the
+-- machine sleeps, which silently froze the snapshot. Saving on the events that
+-- actually change the layout keeps it current; routine/system_woke are backstops.
+local last_layout_save = 0
+
+layout_autosave:subscribe({
+    "routine", "forced", "system_woke",
+    "space_windows_change", "aerospace_workspace_change",
+}, function()
     if recovering then return end
+    if os.time() - last_layout_save < 30 then return end  -- debounce event bursts
     sbar.exec("/opt/homebrew/bin/aerospace list-windows --all --format '%{workspace}' | sort -u | wc -l", function(out)
         local distinct = tonumber(tostring(out):match("%d+")) or 0
         if distinct <= 1 then return end
+        last_layout_save = os.time()
         layout.save(AUTO_LAYOUT)
         -- Remember the focused workspace too: AeroSpace picks its own on
         -- startup, which would otherwise flip the active profile.
