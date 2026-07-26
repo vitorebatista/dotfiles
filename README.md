@@ -45,6 +45,14 @@ Lua (SbarLua) status bar based on [bin101's config](https://github.com/bin101/do
 ### fastfetch
 - Apple-logo system info preset (`apple.jsonc`)
 
+### Screenshots & trackpad (macOS only)
+- **Flameshot** (`flameshot/flameshot.ini`) bound to `alt-shift-s`, launched at startup by AeroSpace
+- **aerospace-swipe** (`aerospace-swipe/`) — three-finger workspace switching; the installer patches out upstream's `signal(SIGCHLD, SIG_IGN)`, which breaks its CLI fallback, and installs the launch agent with a working `PATH`
+
+### After a fresh install — permissions macOS will ask for
+`setup/install-macos.sh` installs and links everything, but these grants are manual:
+**Accessibility** for AeroSpace and AerospaceSwipe, **Screen Recording** for Flameshot, **Calendars** for sketchybar (the next-meeting item). AeroSpace fork builds are ad-hoc signed, so its Accessibility grant must be re-approved after every upgrade.
+
 ### Regolith (Linux only)
 - i3xrocks bar: CPU%, Memory%, Disk%, Temperature, Battery, Time
 - Xresources overrides

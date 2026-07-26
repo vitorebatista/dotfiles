@@ -42,6 +42,12 @@ if [ "$(uname)" = "Darwin" ]; then
   rm -rf "$HOME/.config/sketchybar"
   ln -sf "$DOTFILES/sketchybar/.config/sketchybar" "$HOME/.config/sketchybar"
 
+  mkdir -p "$HOME/.config/flameshot"
+  if [ ! -f "$HOME/.config/flameshot/flameshot.ini" ]; then
+    sed "s|@HOME@|$HOME|g" "$DOTFILES/flameshot/flameshot.ini" \
+      > "$HOME/.config/flameshot/flameshot.ini"
+  fi
+
   mkdir -p "$HOME/.config/fastfetch"
   ln -sf "$DOTFILES/fastfetch/.config/fastfetch/apple.jsonc" "$HOME/.config/fastfetch/apple.jsonc"
   ln -sf "$HOME/.config/fastfetch/apple.jsonc" "$HOME/.config/fastfetch/config.jsonc"

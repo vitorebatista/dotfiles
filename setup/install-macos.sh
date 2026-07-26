@@ -23,11 +23,16 @@ brew install \
 
 # --- Brew casks ---
 echo "[3/8] Installing apps..."
-for cask in alacritty visual-studio-code docker raycast 1password flameshot; do
+# font-hack-nerd-font: every glyph in the sketchybar + fastfetch configs
+# stats: what the sketchybar cpu/memory/disk widgets open on click
+for cask in alacritty visual-studio-code docker raycast 1password flameshot \
+  font-hack-nerd-font stats; do
   brew install --cask "$cask" 2>/dev/null || true
 done
 
-# --- Oh My Zsh ---
+# --- Window management / status bar (macOS) ---
+DOTFILES_ROOT="$(cd "$(dirname "$0")/.." && pwd)"
+
 echo "[4/8] Installing window management + status bar (macOS)..."
 # AeroSpace itself is the vitorebatista fork (its socket-protocol handshake is what
 # the sketchybar event provider needs) — install the latest release manually:
@@ -50,11 +55,51 @@ fi
 luarocks install luasocket 2>/dev/null || true
 luarocks install dkjson 2>/dev/null || true
 
-# Optional: three-finger workspace swiping.
-# NB upstream sets signal(SIGCHLD, SIG_IGN), which breaks pclose() in its CLI
-# fallback path — drop that line before building if swipes look dead.
-#   git clone https://github.com/acsandmann/aerospace-swipe && (cd aerospace-swipe && make install)
+# AeroSpace: the vitorebatista fork. Its socket-protocol handshake is what the
+# sketchybar aerospace_events provider (and other third-party clients) need.
+if [ ! -d /Applications/AeroSpace.app ]; then
+  TMP_AERO="$(mktemp -d)"
+  if gh release download --repo vitorebatista/AeroSpace --pattern '*.zip' --dir "$TMP_AERO" 2>/dev/null; then
+    (cd "$TMP_AERO" && unzip -q ./*.zip)
+    AERO_DIR="$(find "$TMP_AERO" -maxdepth 2 -type d -name 'AeroSpace-v*' | head -1)"
+    if [ -n "$AERO_DIR" ]; then
+      cp -R "$AERO_DIR/AeroSpace.app" /Applications/
+      cp "$AERO_DIR/bin/aerospace" /opt/homebrew/bin/aerospace
+      echo "  AeroSpace installed — grant Accessibility permission, then launch it."
+      echo "  (Builds are ad-hoc signed: re-grant after every upgrade.)"
+    fi
+  else
+    echo "  Skipped AeroSpace (needs 'gh auth login'). Install manually:"
+    echo "    gh release download --repo vitorebatista/AeroSpace --pattern '*.zip'"
+  fi
+  rm -rf "$TMP_AERO"
+fi
 
+# aerospace-swipe: three-finger workspace switching.
+# Upstream sets signal(SIGCHLD, SIG_IGN), which breaks pclose() in its CLI
+# fallback path — every workspace command silently fails. Patch it out.
+if [ ! -d "$HOME/Applications/AerospaceSwipe.app" ]; then
+  TMP_SWIPE="$(mktemp -d)"
+  git clone --depth 1 https://github.com/acsandmann/aerospace-swipe.git "$TMP_SWIPE/aerospace-swipe"
+  sed -i '' '/signal(SIGCHLD, SIG_IGN);/d' "$TMP_SWIPE/aerospace-swipe/src/main.m"
+  (cd "$TMP_SWIPE/aerospace-swipe" && make bundle)
+  mkdir -p "$HOME/Applications"
+  cp -R "$TMP_SWIPE/aerospace-swipe/AerospaceSwipe.app" "$HOME/Applications/"
+  rm -rf "$TMP_SWIPE"
+  # launch agent (adds PATH, which launchd does not inherit)
+  mkdir -p "$HOME/Library/LaunchAgents"
+  sed "s|@APP_PATH@|$HOME/Applications/AerospaceSwipe.app|g" \
+    "$DOTFILES_ROOT/aerospace-swipe/com.acsandmann.swipe.plist" \
+    > "$HOME/Library/LaunchAgents/com.acsandmann.swipe.plist"
+  launchctl load "$HOME/Library/LaunchAgents/com.acsandmann.swipe.plist" 2>/dev/null || true
+  echo "  AerospaceSwipe installed — grant Accessibility permission when prompted."
+fi
+
+# Run the bar at login independently of AeroSpace (aerospace.toml also starts it;
+# sketchybar's single-instance lock makes the duplicate launch a no-op).
+brew services start FelixKratz/formulae/sketchybar 2>/dev/null || true
+
+# --- Oh My Zsh ---
 echo "[5/8] Installing Oh My Zsh..."
 if [ ! -d "$HOME/.oh-my-zsh" ]; then
   sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" "" --unattended
@@ -93,6 +138,14 @@ rm -rf "$HOME/.config/sketchybar"
 ln -sf "$DOTFILES/sketchybar/.config/sketchybar" "$HOME/.config/sketchybar"
 (cd "$HOME/.config/sketchybar/helpers" && make) || true
 
+# Flameshot rewrites this file itself, so seed a copy rather than symlinking the
+# repo (and don't clobber local tweaks on re-runs).
+mkdir -p "$HOME/.config/flameshot"
+if [ ! -f "$HOME/.config/flameshot/flameshot.ini" ]; then
+  sed "s|@HOME@|$HOME|g" "$DOTFILES/flameshot/flameshot.ini" \
+    > "$HOME/.config/flameshot/flameshot.ini"
+fi
+
 mkdir -p "$HOME/.config/fastfetch"
 ln -sf "$DOTFILES/fastfetch/.config/fastfetch/apple.jsonc" "$HOME/.config/fastfetch/apple.jsonc"
 ln -sf "$HOME/.config/fastfetch/apple.jsonc" "$HOME/.config/fastfetch/config.jsonc"
@@ -121,6 +174,9 @@ defaults write NSGlobalDomain InitialKeyRepeat -int 15
 
 # Disable press-and-hold for keys
 defaults write NSGlobalDomain ApplePressAndHoldEnabled -bool false
+
+# Disable window opening animations (AeroSpace goodie: visible in Chrome etc.)
+defaults write -g NSAutomaticWindowAnimationsEnabled -bool false
 
 # Screenshots location
 mkdir -p "$HOME/Screenshots"

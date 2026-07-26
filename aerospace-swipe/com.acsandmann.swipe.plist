@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN"  "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+  <dict>
+    <key>Label</key>
+    <string>com.acsandmann.swipe</string>
+
+    <key>ProgramArguments</key>
+    <array>
+      <string>@APP_PATH@/Contents/MacOS/AerospaceSwipe</string>
+    </array>
+
+    <key>EnvironmentVariables</key>
+    <dict>
+      <key>PATH</key>
+      <string>/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin</string>
+    </dict>
+
+    <key>RunAtLoad</key>
+    <true/>
+
+    <key>KeepAlive</key>
+    <true/>
+
+	<key>LimitLoadToSessionType</key>
+	<string>Aqua</string>
+
+	<key>ProcessType</key>
+    <string>Interactive</string>
+
+    <key>Nice</key>
+	<integer>0</integer>
+
+    <key>StandardOutPath</key>
+    <string>/tmp/swipe.out</string>
+    <key>StandardErrorPath</key>
+    <string>/tmp/swipe.err</string>
+  </dict>
+</plist>
