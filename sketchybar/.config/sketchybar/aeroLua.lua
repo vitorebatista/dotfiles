@@ -172,7 +172,13 @@ function Aerospace:_query(args, want_json)
 end
 
 local function passthrough(self, argtbl, as_json, cb)
-	local res = self:_query(argtbl, as_json)
+	-- Never let a transient AeroSpace failure escape as a Lua error. While the
+	-- screen is locked there is no focused window (aerospace exits 2) and the
+	-- socket can drop on sleep; an uncaught error kills the sketchybar config
+	-- process, which is then respawned and rebuilds every item — the bar looks
+	-- like it restarted. Degrade to an empty result so handlers no-op instead.
+	local ok, res = pcall(self._query, self, argtbl, as_json)
+	if not ok then res = as_json and {} or "" end
 	return cb and cb(res) or res
 end
 
@@ -207,7 +213,9 @@ function Aerospace:list_window_focused(cb)
 end
 
 function Aerospace:workspace(ws)
-	return self:_query({ "workspace", ws }, false)
+	-- Same reasoning as passthrough: a failed focus must not kill the config.
+	local ok, res = pcall(self._query, self, { "workspace", ws }, false)
+	return ok and res or nil
 end
 
 function Aerospace:config_path(cb)
