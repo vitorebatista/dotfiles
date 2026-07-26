@@ -2,9 +2,34 @@ local colors     = require("colors")
 local settings   = require("settings")
 local app_icons  = require("helpers.app_icons")
 local profiles   = require("helpers.workspace_profiles")
+local layout     = require("helpers.layout_persist")
 local aerospace  = sbar.aerospace
 local workspaces = {}
 local icon_cache = {}
+
+-- Name of the always-on layout snapshot used to restore window placement
+-- after an AeroSpace restart (see helpers/layout_persist.lua).
+local AUTO_LAYOUT = "autosave"
+
+layout.init(aerospace)
+
+-- Periodically snapshot window→workspace placement. Guard: never save while
+-- recovering, and never save a "collapsed" state (every window on a single
+-- workspace) — that is what AeroSpace looks like right after a restart, and
+-- saving it would destroy the snapshot we need to restore from.
+local layout_autosave = sbar.add("item", "aerospace.layout_autosave", {
+    drawing     = false,
+    update_freq = 120,
+})
+
+layout_autosave:subscribe({ "routine", "forced" }, function()
+    if recovering then return end
+    sbar.exec("/opt/homebrew/bin/aerospace list-windows --all --format '%{workspace}' | sort -u | wc -l", function(out)
+        local distinct = tonumber(tostring(out):match("%d+")) or 0
+        if distinct <= 1 then return end
+        layout.save(AUTO_LAYOUT)
+    end)
+end)
 
 
 -- Global focus state:
@@ -917,6 +942,13 @@ local function fullResync()
                 updateSpaceWindows(spaceId)
             end
             refreshAllSpaceVisibility()
+            -- AeroSpace forgets window→workspace assignment across a restart:
+            -- every window lands on one workspace. Re-apply the last autosaved
+            -- layout snapshot. Settle first so on-window-detected rules (which
+            -- re-run as AeroSpace comes back up) don't race the restore.
+            sbar.exec("sleep 2", function()
+                layout.apply(AUTO_LAYOUT)
+            end)
         end)
     end)
 end
