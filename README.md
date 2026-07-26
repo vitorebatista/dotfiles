@@ -40,7 +40,7 @@ Lua (SbarLua) status bar based on [bin101's config](https://github.com/bin101/do
 - **Right side:** clock (click → Calendar), next-meeting countdown via icalBuddy (`Xmin left · title`, filtered to the work calendar), network up/down with details popup, CPU % + memory % (colored by load, click → Stats), Secure Input padlock warning
 - Battery and Low Power Mode widgets exist but are commented out in `items/widgets/init.lua`
 - Fonts: Hack Nerd Font (SF Pro variant available by flipping `settings.lua` + `helpers/default_font.lua`)
-- Deps: `brew install lua luarocks ical-buddy FelixKratz/formulae/sketchybar --cask font-sketchybar-app-font`, `luarocks install luasocket dkjson`, [SbarLua](https://github.com/FelixKratz/SbarLua); build `helpers/` with make; grant sketchybar Calendars access (for icalBuddy)
+- Deps are installed by `setup/install-macos.sh` (step 4): lua, luarocks, ical-buddy, fastfetch, sketchybar, borders, sketchybar-app-font, SbarLua, luasocket/dkjson. Grant sketchybar **Calendars** access (for the meeting item) and AeroSpace **Accessibility**; screenshots need Flameshot to have **Screen Recording**
 
 ### fastfetch
 - Apple-logo system info preset (`apple.jsonc`)

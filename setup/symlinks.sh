@@ -36,6 +36,17 @@ mkdir -p "$HOME/.claude"
 ln -sf "$DOTFILES/claude/settings.json" "$HOME/.claude/settings.json"
 
 # Regolith (Linux only)
+if [ "$(uname)" = "Darwin" ]; then
+  ln -sf "$DOTFILES/aerospace/.aerospace.toml" "$HOME/.aerospace.toml"
+
+  rm -rf "$HOME/.config/sketchybar"
+  ln -sf "$DOTFILES/sketchybar/.config/sketchybar" "$HOME/.config/sketchybar"
+
+  mkdir -p "$HOME/.config/fastfetch"
+  ln -sf "$DOTFILES/fastfetch/.config/fastfetch/apple.jsonc" "$HOME/.config/fastfetch/apple.jsonc"
+  ln -sf "$HOME/.config/fastfetch/apple.jsonc" "$HOME/.config/fastfetch/config.jsonc"
+fi
+
 if [ -d /etc/regolith ]; then
   mkdir -p "$HOME/.config/regolith3/i3xrocks/conf.d"
   for f in "$DOTFILES/regolith/i3xrocks/"*; do
