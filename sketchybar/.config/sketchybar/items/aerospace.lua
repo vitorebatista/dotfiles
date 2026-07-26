@@ -29,16 +29,15 @@ local layout_autosave = sbar.add("item", "aerospace.layout_autosave", {
 -- Event-driven, not timer-driven: the routine tick does not resume after the
 -- machine sleeps, which silently froze the snapshot. Saving on the events that
 -- actually change the layout keeps it current; routine/system_woke are backstops.
+local SAVE_INTERVAL    = 30   -- seconds; minimum gap between snapshots
 local last_layout_save = 0
+local save_pending     = false
 
-layout_autosave:subscribe({
-    "routine", "forced", "system_woke",
-    "space_windows_change", "aerospace_workspace_change",
-}, function()
-    if recovering then return end
-    if os.time() - last_layout_save < 30 then return end  -- debounce event bursts
+local function saveLayoutNow()
     sbar.exec("/opt/homebrew/bin/aerospace list-windows --all --format '%{workspace}' | sort -u | wc -l", function(out)
         local distinct = tonumber(tostring(out):match("%d+")) or 0
+        -- A single distinct workspace is what AeroSpace looks like right after a
+        -- restart; saving that would destroy the snapshot we restore from.
         if distinct <= 1 then return end
         last_layout_save = os.time()
         layout.save(AUTO_LAYOUT)
@@ -47,7 +46,29 @@ layout_autosave:subscribe({
         sbar.exec("/opt/homebrew/bin/aerospace list-workspaces --focused > "
             .. FOCUS_FILE .. " 2>/dev/null", function() end)
     end)
-end)
+end
+
+-- Trailing-edge debounce: a request inside the interval is deferred, never
+-- dropped, so the final state after a burst of moves always lands on disk.
+local function requestLayoutSave()
+    if recovering then return end
+    local age = os.time() - last_layout_save
+    if age >= SAVE_INTERVAL then
+        saveLayoutNow()
+        return
+    end
+    if save_pending then return end
+    save_pending = true
+    sbar.exec("sleep " .. (SAVE_INTERVAL - age), function()
+        save_pending = false
+        if not recovering then saveLayoutNow() end
+    end)
+end
+
+layout_autosave:subscribe({
+    "routine", "forced", "system_woke",
+    "space_windows_change", "aerospace_workspace_change",
+}, requestLayoutSave)
 
 
 -- Global focus state:
