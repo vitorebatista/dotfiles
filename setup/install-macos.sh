@@ -25,7 +25,7 @@ brew install \
 echo "[3/8] Installing apps..."
 # font-hack-nerd-font: every glyph in the sketchybar + fastfetch configs
 # stats: what the sketchybar cpu/memory/disk widgets open on click
-for cask in alacritty visual-studio-code docker raycast 1password flameshot \
+for cask in alacritty visual-studio-code docker raycast 1password \
   font-hack-nerd-font stats; do
   brew install --cask "$cask" 2>/dev/null || true
 done
@@ -137,14 +137,6 @@ ln -sf "$DOTFILES/aerospace/.aerospace.toml" "$HOME/.aerospace.toml"
 rm -rf "$HOME/.config/sketchybar"
 ln -sf "$DOTFILES/sketchybar/.config/sketchybar" "$HOME/.config/sketchybar"
 (cd "$HOME/.config/sketchybar/helpers" && make) || true
-
-# Flameshot rewrites this file itself, so seed a copy rather than symlinking the
-# repo (and don't clobber local tweaks on re-runs).
-mkdir -p "$HOME/.config/flameshot"
-if [ ! -f "$HOME/.config/flameshot/flameshot.ini" ]; then
-  sed "s|@HOME@|$HOME|g" "$DOTFILES/flameshot/flameshot.ini" \
-    > "$HOME/.config/flameshot/flameshot.ini"
-fi
 
 mkdir -p "$HOME/.config/fastfetch"
 ln -sf "$DOTFILES/fastfetch/.config/fastfetch/apple.jsonc" "$HOME/.config/fastfetch/apple.jsonc"

@@ -43,18 +43,18 @@ Lua (SbarLua) status bar based on [bin101's config](https://github.com/bin101/do
 - **Never let an AeroSpace query raise.** While the screen is locked there is no focused window, so `aerospace` exits 2; an uncaught error kills the sketchybar config process, which is respawned and rebuilds every item — looking exactly like the bar restarting. `aeroLua.lua` degrades failures to empty results in `passthrough()`/`workspace()`.
 - Items stay `updates = "when_shown"` on purpose: updating while the bar is hidden only queues work that floods in at unlock.
 - Fonts: Hack Nerd Font (SF Pro variant available by flipping `settings.lua` + `helpers/default_font.lua`)
-- Deps are installed by `setup/install-macos.sh` (step 4): lua, luarocks, ical-buddy, fastfetch, sketchybar, borders, sketchybar-app-font, SbarLua, luasocket/dkjson. Grant sketchybar **Calendars** access (for the meeting item) and AeroSpace **Accessibility**; screenshots need Flameshot to have **Screen Recording**
+- Deps are installed by `setup/install-macos.sh` (step 4): lua, luarocks, ical-buddy, fastfetch, sketchybar, borders, sketchybar-app-font, SbarLua, luasocket/dkjson. Grant sketchybar **Calendars** access (for the meeting item) and AeroSpace **Accessibility**; screenshots need AeroSpace to have **Screen Recording**
 
 ### fastfetch
 - Apple-logo system info preset (`apple.jsonc`)
 
 ### Screenshots & trackpad (macOS only)
-- **Flameshot** (`flameshot/flameshot.ini`) bound to `alt-shift-s`, launched at startup by AeroSpace
+- **macOS `screencapture`** bound to `alt-shift-s` in AeroSpace (`-i -c`: drag a region, lands on the clipboard)
 - **aerospace-swipe** (`aerospace-swipe/`) — three-finger workspace switching; the installer patches out upstream's `signal(SIGCHLD, SIG_IGN)`, which breaks its CLI fallback, and installs the launch agent with a working `PATH`
 
 ### After a fresh install — permissions macOS will ask for
 `setup/install-macos.sh` installs and links everything, but these grants are manual:
-**Accessibility** for AeroSpace and AerospaceSwipe, **Screen Recording** for Flameshot, **Calendars** for sketchybar (the next-meeting item). AeroSpace fork builds are ad-hoc signed, so its Accessibility grant must be re-approved after every upgrade.
+**Accessibility** for AeroSpace and AerospaceSwipe, **Screen Recording** for AeroSpace (it spawns `screencapture`), **Calendars** for sketchybar (the next-meeting item). AeroSpace fork builds are ad-hoc signed, so its Accessibility grant must be re-approved after every upgrade.
 
 ### Regolith (Linux only)
 - i3xrocks bar: CPU%, Memory%, Disk%, Temperature, Battery, Time

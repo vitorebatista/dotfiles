@@ -18,10 +18,7 @@ after-startup-command = [
     'exec-and-forget borders active_color=0xffe1e3e4 inactive_color=0xff494d64 width=5.0',
     # sketchybar has a built-in detection of already running process,
     # so it won't be run twice on AeroSpace restart
-    'exec-and-forget sketchybar',
-    # Flameshot in the background so alt-shift-s captures instantly.
-    # `open -a` is idempotent: it won't spawn a second instance on reload.
-    'exec-and-forget open -a flameshot'
+    'exec-and-forget sketchybar'
 ]
 
 # Sketchybar updates are event-driven: the aerospace_events provider subscribes
@@ -96,11 +93,10 @@ PATH = '/opt/homebrew/bin:/opt/homebrew/sbin:${PATH}'
 cmd-h = []     # Disable "hide application"
 cmd-alt-h = [] # Disable "hide others"
 
-# Interactive screenshot with Flameshot's annotation editor.
-# NB: no '-c'/'-p' here on purpose — passing a final action makes Flameshot drop
-# the Copy/Save/Upload/Pin buttons and show only "Accept".
-# Plain macOS alternative: 'exec-and-forget screencapture -i -c'
-alt-shift-s = 'exec-and-forget /Applications/flameshot.app/Contents/MacOS/flameshot gui'
+# Interactive screenshot (drag a region) straight to the clipboard.
+# Drop '-c' to save to the Desktop instead; swap for 'screencapture -iU' to get
+# the full Cmd-Shift-5 capture UI with the markup thumbnail.
+alt-shift-s = 'exec-and-forget screencapture -i -c'
 
 # All possible keys:
 # - Letters.        a, b, c, ..., z
