@@ -1,10 +1,114 @@
 {
+  "env": {
+    "CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS": "1"
+  },
+  "permissions": {
+    "defaultMode": "auto"
+  },
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "$HOME/.claude/hooks/rtk-rewrite.sh"
+          }
+        ]
+      }
+    ],
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"$HOME/.claude/hooks/gsd-check-update.js\""
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"$HOME/.claude/hooks/gsd-context-monitor.js\""
+          }
+        ]
+      }
+    ]
+  },
+  "worktree": {
+    "baseRef": "fresh"
+  },
+  "statusLine": {
+    "type": "command",
+    "command": "node \"$HOME/.claude/hooks/gsd-statusline.js\""
+  },
   "enabledPlugins": {
-    "frontend-design@claude-plugins-official": true,
-    "code-review@claude-plugins-official": true,
-    "github@claude-plugins-official": true,
     "context7@claude-plugins-official": true,
-    "typescript-lsp@claude-plugins-official": true,
-    "security-guidance@claude-plugins-official": true
+    "claude-code-setup@claude-plugins-official": true,
+    "github@claude-plugins-official": true,
+    "asana@claude-plugins-official": true,
+    "sentry@claude-plugins-official": true,
+    "slack@claude-plugins-official": true,
+    "code-simplifier@claude-plugins-official": true,
+    "code-review@claude-plugins-official": true,
+    "security-guidance@claude-plugins-official": true,
+    "ruby-lsp@claude-plugins-official": true,
+    "superpowers@claude-plugins-official": true,
+    "expo@claude-plugins-official": true,
+    "skill-creator@claude-plugins-official": true,
+    "swift-lsp@claude-plugins-official": true,
+    "ponytail@ponytail": true,
+    "diagram-design@diagram-design": true
+  },
+  "extraKnownMarketplaces": {
+    "superpowers-marketplace": {
+      "source": {
+        "source": "github",
+        "repo": "obra/superpowers-marketplace"
+      }
+    },
+    "expo-plugins": {
+      "source": {
+        "source": "github",
+        "repo": "expo/skills"
+      }
+    },
+    "trailofbits": {
+      "source": {
+        "source": "github",
+        "repo": "trailofbits/skills"
+      }
+    },
+    "ponytail": {
+      "source": {
+        "source": "github",
+        "repo": "DietrichGebert/ponytail"
+      }
+    },
+    "diagram-design": {
+      "source": {
+        "source": "github",
+        "repo": "cathrynlavery/diagram-design"
+      }
+    }
+  },
+  "effortLevel": "high",
+  "tui": "fullscreen",
+  "skipDangerousModePermissionPrompt": true,
+  "theme": "dark-daltonized",
+  "editorMode": "normal",
+  "verbose": false,
+  "preferredNotifChannel": "auto",
+  "teammateMode": "auto",
+  "remoteControlAtStartup": true,
+  "inputNeededNotifEnabled": true,
+  "agentPushNotifEnabled": true,
+  "modelSettings": {
+    "claude-opus-5": {
+      "effortLevel": "high"
+    }
   }
 }

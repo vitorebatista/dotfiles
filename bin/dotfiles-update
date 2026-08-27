@@ -4,7 +4,7 @@
 
 set -e
 
-DOTFILES="$HOME/dotfiles"
+DOTFILES="$(cd "$(dirname "$(readlink -f "$0")")/.." && pwd)"
 
 echo "Updating dotfiles..."
 

@@ -31,9 +31,12 @@ ln -sf "$DOTFILES/vscode/settings.json" "$HOME/.config/Code/User/settings.json"
 ln -sf "$DOTFILES/vscode/keybindings.json" "$HOME/.config/Code/User/keybindings.json"
 ln -sf "$DOTFILES/vscode/snippets/global.code-snippets" "$HOME/.config/Code/User/snippets/global.code-snippets"
 
-# Claude Code
+# Claude Code (Claude rewrites this file atomically, so a symlink gets replaced)
 mkdir -p "$HOME/.claude"
-ln -sf "$DOTFILES/claude/settings.json" "$HOME/.claude/settings.json"
+[ -e "$HOME/.claude/settings.json" ] || cp "$DOTFILES/claude/settings.json" "$HOME/.claude/settings.json"
+
+# Custom scripts
+ln -sfn "$DOTFILES/bin" "$HOME/bin"
 
 # Regolith (Linux only)
 if [ "$(uname)" = "Darwin" ]; then

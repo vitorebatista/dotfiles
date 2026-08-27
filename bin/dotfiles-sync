@@ -4,31 +4,32 @@
 
 set -e
 
-DOTFILES="$HOME/dotfiles"
+DOTFILES="$(cd "$(dirname "$(readlink -f "$0")")/.." && pwd)"
+
+# Copy live -> repo, skipping anything already symlinked into the repo
+sync() {
+  [ -f "$1" ] || return 0
+  [ "$(readlink -f "$1")" = "$(readlink -f "$2")" ] && return 0
+  cp "$1" "$2"
+}
 
 echo "Syncing configs to $DOTFILES..."
 
-# Zsh
-cp "$HOME/.zshrc" "$DOTFILES/zsh/.zshrc"
-
-# Git (exclude local includes)
-cp "$HOME/.gitconfig" "$DOTFILES/git/.gitconfig"
-
-# Starship
-cp "$HOME/.config/starship.toml" "$DOTFILES/starship/starship.toml"
-
-# Alacritty
-[ -f "$HOME/.config/alacritty/alacritty.toml" ] && \
-  cp "$HOME/.config/alacritty/alacritty.toml" "$DOTFILES/alacritty/alacritty.toml"
-
-# Tmux
-cp "$HOME/.tmux.conf" "$DOTFILES/tmux/.tmux.conf"
+sync "$HOME/.zshrc"                          "$DOTFILES/zsh/.zshrc"
+sync "$HOME/.gitconfig"                      "$DOTFILES/git/.gitconfig"
+sync "$HOME/.config/starship.toml"           "$DOTFILES/starship/starship.toml"
+sync "$HOME/.config/alacritty/alacritty.toml" "$DOTFILES/alacritty/alacritty.toml"
+sync "$HOME/.tmux.conf"                      "$DOTFILES/tmux/.tmux.conf"
+sync "$HOME/.aerospace.toml"                 "$DOTFILES/aerospace/.aerospace.toml"
 
 # VS Code
-[ -f "$HOME/.config/Code/User/settings.json" ] && \
-  cp "$HOME/.config/Code/User/settings.json" "$DOTFILES/vscode/settings.json"
+sync "$HOME/.config/Code/User/settings.json" "$DOTFILES/vscode/settings.json"
 command -v code &>/dev/null && \
   code --list-extensions > "$DOTFILES/vscode/extensions.txt"
+
+# Claude Code (strip absolute paths - this repo is public)
+[ -f "$HOME/.claude/settings.json" ] && \
+  sed "s#$HOME/.claude#\$HOME/.claude#g" "$HOME/.claude/settings.json" > "$DOTFILES/claude/settings.json"
 
 # Regolith (Linux only)
 if [ -d "$HOME/.config/regolith3/i3xrocks/conf.d" ]; then
@@ -43,4 +44,4 @@ echo ""
 echo "Changes:"
 git status --short
 echo ""
-echo "Run 'cd ~/dotfiles && git add -A && git commit' to save."
+echo "Run 'cd $DOTFILES && git add -A && git commit' to save."
