@@ -28,7 +28,7 @@ export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"
 
 # Modern CLI replacements
-alias cat="batcat"
+# alias cat="batcat"
 alias ls="eza --icons --group-directories-first"
 alias ll="eza -la --icons --group-directories-first"
 alias tree="eza --tree --icons"
@@ -59,6 +59,11 @@ alias rm="rm -I --preserve-root=all"
 alias df="df -h"
 alias du="du -h"
 
+# Mise (runtime version manager)
+# Shims work in non-interactive shells (scripts, editor tools); activate hook handles interactive shells.
+export PATH="$HOME/.local/share/mise/shims:$PATH"
+eval "$(mise activate zsh)"
+
 # Zoxide (smart cd)
 eval "$(zoxide init zsh)"
 
@@ -67,3 +72,9 @@ eval "$(starship init zsh)"
 
 # Local overrides (not version controlled)
 [ -f ~/.zsh.local ] && source ~/.zsh.local
+
+export PATH="/opt/homebrew/opt/libpq/bin:$PATH"
+
+# --- Secrets ------------------------------------------------------------------
+# This file is tracked in a public dotfiles repo, so credentials live outside it.
+[ -r "$HOME/.config/secrets.zsh" ] && source "$HOME/.config/secrets.zsh"
