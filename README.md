@@ -30,6 +30,9 @@ Personal development environment configuration for **Ubuntu/Regolith** and **mac
 - Tiling window manager config (i3-like), running the [vitorebatista/AeroSpace](https://github.com/vitorebatista/AeroSpace) fork
 - Window rules match by `app-name-regex-substring` (Slack → S, VS Code → C, Chrome → 9, Brave → 1, WhatsApp → W, Spotify/Music → M; Finder/QuickTime float)
 - JankyBorders on startup; SketchyBar updates are fully event-driven (no exec callbacks in the config)
+- **`alt-\`` / `alt-shift-\`` cycle windows within the focused workspace** (`bin/aerospace-cycle`). Cmd+Tab only reaches apps, so it never finds a second window of the same app, and `focus dfs-next` ignores `--boundaries workspace` and walks onto other workspaces.
+- **App self-activation is bounced** (`bin/aerospace-focus-guard`, on `exec-on-workspace-change`). WhatsApp on a new message — Electron apps generally — raises itself and AeroSpace follows, yanking the desktop mid-sentence. `focus-follows-app-activation = 'smart'` relayouts wrongly here, so the guard judges it externally: a switch is user-driven when the last HID input is under 2s old, and anything older gets sent back. **Tradeoff:** an app that takes longer than that to open its first window after you click gets bounced too — widen `GRACE` in the script if it bites. Set `exec-on-workspace-change = []` to turn it off.
+- **Homebrew must come first on `PATH`.** A hand-downloaded `aerospace` in `/usr/local/bin` shadowed the Homebrew one for months; the older CLI cannot speak the running fork's socket protocol, so every query died as `Socket is not connected` while the app itself was fine.
 
 ### SketchyBar (macOS only)
 Lua (SbarLua) status bar based on [bin101's config](https://github.com/bin101/dotfiles), floating-bar style (rounded, translucent, 8px margins).
@@ -51,6 +54,7 @@ Lua (SbarLua) status bar based on [bin101's config](https://github.com/bin101/do
 ### Screenshots & trackpad (macOS only)
 - **macOS `screencapture`** bound to `alt-shift-s` in AeroSpace (`-i -c`: drag a region, lands on the clipboard)
 - **aerospace-swipe** (`aerospace-swipe/`) — three-finger workspace switching; the installer patches out upstream's `signal(SIGCHLD, SIG_IGN)`, which breaks its CLI fallback, and installs the launch agent with a working `PATH`
+- **`wake-rearm.patch`** — upstream re-enables its gesture tap when macOS disables it, but only from inside the tap callback, so it needs an event to still arrive. Sleep can tear the tap down and deliver nothing: swipes go dead while the process stays healthy and `KeepAlive` sees nothing wrong. The patch re-checks the tap on `NSWorkspaceDidWakeNotification` and re-enables or rebuilds it. Rebuilding the app invalidates its ad-hoc signature, so macOS asks for **Accessibility** again.
 
 ### After a fresh install — permissions macOS will ask for
 `setup/install-macos.sh` installs and links everything, but these grants are manual:

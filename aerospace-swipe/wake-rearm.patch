@@ -1,0 +1,50 @@
+diff --git a/src/main.m b/src/main.m
+index fae40b9..ae54338 100644
+--- a/src/main.m
++++ b/src/main.m
+@@ -373,6 +373,45 @@ int main(int argc, const char* argv[])
+ 
+ 		event_tap_begin(&g_event_tap, key_handler);
+ 
++		// key_handler re-enables a tap that macOS disables by timeout,
++		// but only because a kCGEventTapDisabled* event still arrives to
++		// run it. Sleep can tear the tap down without delivering anything
++		// at all, and then nothing re-arms it: the daemon stays healthy,
++		// KeepAlive sees a live process, and swipes are silently dead
++		// until a restart. So check the tap on every wake.
++		[[[NSWorkspace sharedWorkspace] notificationCenter]
++			addObserverForName:NSWorkspaceDidWakeNotification
++			            object:nil
++			             queue:[NSOperationQueue mainQueue]
++			        usingBlock:^(__unused NSNotification* note) {
++				if (event_tap_enabled(&g_event_tap))
++					return;
++
++				if (g_event_tap.handle) {
++					CGEventTapEnable(g_event_tap.handle, true);
++					if (event_tap_enabled(&g_event_tap)) {
++						NSLog(@"Wake: gesture tap re-enabled.");
++						return;
++					}
++				}
++
++				// Past re-enabling: tear the dead tap down by hand
++				// (event_tap_end only acts on an ENABLED tap) and rebuild.
++				if (g_event_tap.runloop_source) {
++					CFRunLoopRemoveSource(CFRunLoopGetMain(),
++						g_event_tap.runloop_source, kCFRunLoopDefaultMode);
++					CFRelease(g_event_tap.runloop_source);
++					g_event_tap.runloop_source = NULL;
++				}
++				if (g_event_tap.handle) {
++					CFMachPortInvalidate(g_event_tap.handle);
++					CFRelease(g_event_tap.handle);
++					g_event_tap.handle = NULL;
++				}
++				NSLog(@"Wake: gesture tap rebuilt (%s).",
++					event_tap_begin(&g_event_tap, key_handler) ? "ok" : "FAILED");
++			}];
++
+ 		return NSApplicationMain(argc, argv);
+ 	}
+ }

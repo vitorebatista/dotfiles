@@ -1,0 +1,45 @@
+#!/usr/bin/env bash
+# aerospace-focus-guard — bounce workspace switches nobody asked for.
+#
+# macOS lets an app activate itself (WhatsApp on a new message, Electron apps
+# generally) and AeroSpace faithfully follows native focus, so the desktop
+# yanks to that app's workspace mid-sentence. Hyprland answers this with
+# focus_on_activate = false; AeroSpace's own answer is
+# focus-follows-app-activation = 'smart', which relayouts wrongly on this
+# setup (see the note in .aerospace.toml). This is the external equivalent.
+#
+# Called from exec-on-workspace-change. A switch is user-driven when the last
+# HID input — key, click, or trackpad contact — is under 2s old; the three-
+# finger swipe counts because aerospace-swipe reads gesture CGEvents, which
+# are HID input. Anything older is an app raising itself: send it back.
+#
+# ponytail: 2s window, whole seconds. A switch made >2s after your last
+# keypress reads as an app self-activation and gets bounced; widen GRACE if
+# that ever bites.
+set -uo pipefail
+
+GRACE=2
+A=/opt/homebrew/bin/aerospace          # stale /usr/local/bin copy can't speak the socket
+BOUNCE="/tmp/aerospace-guard-bounce-$(id -u)"
+
+PREV="${AEROSPACE_PREV_WORKSPACE:-}"
+[ -n "$PREV" ] || exit 0
+
+# Our own bounce landing: consume the marker instead of judging it again,
+# which would ping-pong forever.
+if [ -f "$BOUNCE" ]; then
+  /bin/rm -f "$BOUNCE"
+  exit 0
+fi
+
+idle_seconds() {
+  ioreg -c IOHIDSystem 2>/dev/null \
+    | awk '/HIDIdleTime/ { print int($NF / 1000000000); exit }'
+}
+
+IDLE="$(idle_seconds)"
+[ -n "$IDLE" ] || exit 0            # can't tell: leave the switch alone
+[ "$IDLE" -le "$GRACE" ] && exit 0  # user did this
+
+touch "$BOUNCE"
+"$A" workspace "$PREV" 2>/dev/null || /bin/rm -f "$BOUNCE"

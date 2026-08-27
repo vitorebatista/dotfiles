@@ -1,0 +1,36 @@
+#!/usr/bin/env bash
+# aerospace-cycle [next|prev] — Alt+Tab for windows on the FOCUSED workspace.
+#
+# Cmd+Tab switches apps, so it never reaches a second window of the same app,
+# and AeroSpace's `focus dfs-next` ignores --boundaries workspace (it walks
+# straight off onto another workspace). So do the walk here, over the windows
+# aerospace reports for this workspace, where it cannot leave.
+#
+# Floating windows are included on purpose: this is the only switcher that
+# reaches a float that has sunk behind the tiles.
+set -uo pipefail
+
+# Homebrew first: a stale /usr/local/bin/aerospace cannot speak the app's
+# socket protocol and every query dies as "Socket is not connected".
+A=/opt/homebrew/bin/aerospace
+[ -x "$A" ] || A="$(command -v aerospace)" || exit 0
+
+# bash 3.2 (what macOS ships) has no mapfile
+WINS=()
+while IFS= read -r w; do WINS+=("$w"); done < <("$A" list-windows --workspace focused --format '%{window-id}' 2>/dev/null)
+[ "${#WINS[@]}" -gt 1 ] || exit 0
+
+CUR="$("$A" list-windows --focused --format '%{window-id}' 2>/dev/null | head -1)"
+
+idx=0
+for i in "${!WINS[@]}"; do
+  if [ "${WINS[$i]}" = "$CUR" ]; then idx=$i; break; fi
+done
+
+if [ "${1:-next}" = "prev" ]; then
+  n=$(( (idx - 1 + ${#WINS[@]}) % ${#WINS[@]} ))
+else
+  n=$(( (idx + 1) % ${#WINS[@]} ))
+fi
+
+"$A" focus --window-id "${WINS[$n]}"

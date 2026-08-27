@@ -82,6 +82,11 @@ if [ ! -d "$HOME/Applications/AerospaceSwipe.app" ]; then
   TMP_SWIPE="$(mktemp -d)"
   git clone --depth 1 https://github.com/acsandmann/aerospace-swipe.git "$TMP_SWIPE/aerospace-swipe"
   sed -i '' '/signal(SIGCHLD, SIG_IGN);/d' "$TMP_SWIPE/aerospace-swipe/src/main.m"
+  # Sleep can kill the gesture tap without delivering the disable event that
+  # would make the daemon re-enable it, leaving swipes dead while the process
+  # looks healthy. Re-arm on wake.
+  git -C "$TMP_SWIPE/aerospace-swipe" apply "$DOTFILES_ROOT/aerospace-swipe/wake-rearm.patch" \
+    || echo "  WARNING: wake-rearm.patch did not apply - upstream moved; swipes will not survive sleep."
   (cd "$TMP_SWIPE/aerospace-swipe" && make bundle)
   mkdir -p "$HOME/Applications"
   cp -R "$TMP_SWIPE/aerospace-swipe/AerospaceSwipe.app" "$HOME/Applications/"

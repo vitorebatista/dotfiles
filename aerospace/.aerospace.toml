@@ -22,8 +22,10 @@ after-startup-command = [
 ]
 
 # Sketchybar updates are event-driven: the aerospace_events provider subscribes
-# to the AeroSpace socket directly — no exec callbacks needed.
-exec-on-workspace-change = []
+# to the AeroSpace socket directly — no exec callbacks needed for the bar.
+# The one hook here bounces workspace switches the user did not ask for; see
+# bin/aerospace-focus-guard. Set back to [] to turn that off.
+exec-on-workspace-change = ['/bin/bash', '-c', '$HOME/bin/aerospace-focus-guard']
 on-focus-changed = []
 on-mode-changed = []
 
@@ -208,6 +210,11 @@ alt-shift-w = 'move-node-to-workspace W'
 alt-shift-x = 'move-node-to-workspace X'
 alt-shift-y = 'move-node-to-workspace Y'
 alt-shift-z = 'move-node-to-workspace Z'
+
+# Cycle windows WITHIN the focused workspace — Cmd+Tab only reaches apps, and
+# 'focus dfs-next' walks off onto other workspaces. See bin/aerospace-cycle.
+alt-backtick = 'exec-and-forget $HOME/bin/aerospace-cycle next'
+alt-shift-backtick = 'exec-and-forget $HOME/bin/aerospace-cycle prev'
 
 # See: https://nikitabobko.github.io/AeroSpace/commands#workspace-back-and-forth
 alt-tab = 'workspace-back-and-forth'
