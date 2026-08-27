@@ -1,5 +1,8 @@
 # Path
-export PATH=$HOME/.cargo/bin:$HOME/bin:$HOME/.local/bin:/usr/local/go/bin:/usr/local/bin:$PATH
+# /opt/homebrew/bin ahead of /usr/local/bin: a stray hand-downloaded binary in
+# /usr/local/bin otherwise shadows the Homebrew one (this bit with aerospace,
+# where the older CLI could not speak the running app's socket protocol).
+export PATH=$HOME/.cargo/bin:$HOME/bin:$HOME/.local/bin:/opt/homebrew/bin:/opt/homebrew/sbin:/usr/local/go/bin:/usr/local/bin:$PATH
 
 # Oh My Zsh
 export ZSH="$HOME/.oh-my-zsh"
@@ -10,10 +13,8 @@ plugins=(
   docker
   docker-compose
   npm
-  asdf
   fzf
   fzf-tab
-  z
   zsh-autosuggestions
   zsh-syntax-highlighting
   zsh-autopair
@@ -22,13 +23,9 @@ plugins=(
 source $ZSH/oh-my-zsh.sh
 
 
-# NVM
-export NVM_DIR="$HOME/.nvm"
-[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
-[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"
-
 # Modern CLI replacements
-# alias cat="batcat"
+command -v bat &>/dev/null && alias cat="bat --paging=never"
+command -v batcat &>/dev/null && alias cat="batcat --paging=never"
 alias ls="eza --icons --group-directories-first"
 alias ll="eza -la --icons --group-directories-first"
 alias tree="eza --tree --icons"
@@ -55,7 +52,12 @@ alias dclean="docker system prune -af --volumes"
 claude-d() { claude --dangerously-skip-permissions "$@"; }
 
 # Safety
-alias rm="rm -I --preserve-root=all"
+# BSD rm has -I but not --preserve-root, so guard the GNU-only flag
+if [ "$(uname)" = "Darwin" ]; then
+  alias rm="rm -I"
+else
+  alias rm="rm -I --preserve-root=all"
+fi
 alias df="df -h"
 alias du="du -h"
 
