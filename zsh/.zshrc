@@ -63,7 +63,9 @@ alias du="du -h"
 
 # Mise (runtime version manager)
 # Shims work in non-interactive shells (scripts, editor tools); activate hook handles interactive shells.
-export PATH="$HOME/.local/share/mise/shims:$PATH"
+# Appended, not prepended: a shim for a tool mise doesn't manage (e.g. codex) hangs
+# forever instead of falling through, shadowing the real binary in ~/.local/bin.
+export PATH="$PATH:$HOME/.local/share/mise/shims"
 eval "$(mise activate zsh)"
 
 # Zoxide (smart cd)
@@ -80,3 +82,15 @@ export PATH="/opt/homebrew/opt/libpq/bin:$PATH"
 # --- Secrets ------------------------------------------------------------------
 # This file is tracked in a public dotfiles repo, so credentials live outside it.
 [ -r "$HOME/.config/secrets.zsh" ] && source "$HOME/.config/secrets.zsh"
+
+
+# Homebrew
+eval "$(brew shellenv)"
+
+# Homebrew: never prompt for confirmation
+export HOMEBREW_NO_ASK=1
+
+eval "$(/Users/vitorebatista/.local/bin/mise activate zsh)" # added by https://mise.run/zsh
+
+# Manually sync Claude memory to GitHub (also runs hourly via launchd)
+alias memory-update="$HOME/claude-memory-backup/auto-sync.sh"
