@@ -85,12 +85,11 @@ export PATH="/opt/homebrew/opt/libpq/bin:$PATH"
 
 
 # Homebrew
-eval "$(brew shellenv)"
+command -v brew &>/dev/null && eval "$(brew shellenv)"
 
 # Homebrew: never prompt for confirmation
 export HOMEBREW_NO_ASK=1
 
-eval "$(/Users/vitorebatista/.local/bin/mise activate zsh)" # added by https://mise.run/zsh
 
 # Manually sync Claude memory to GitHub (also runs hourly via launchd)
 alias memory-update="$HOME/claude-memory-backup/auto-sync.sh"
