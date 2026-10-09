@@ -43,6 +43,33 @@ alias gl="git log --oneline -20"
 alias gundo="git reset --soft HEAD~1"
 alias gpf="git push --force-with-lease"
 
+# Git worktrees (worktrunk) + AI agent YOLO mode
+_agent-w() {
+  local agent="$1" agent_flag="$2"
+  shift 2
+
+  if (( $# != 1 )); then
+    print -u2 "Usage: ${agent}-w <branch>"
+    return 2
+  fi
+  local name="$1"
+
+  local create=(--create)
+  git show-ref --verify --quiet "refs/heads/$name" && create=()
+
+  wt switch "${create[@]}" "$name" -x "$agent" -- "$agent_flag" || return 1
+  # ponytail: no --force, so a dirty worktree is kept and wt says why
+  wt remove "$name"
+}
+
+codex-w() {
+  _agent-w codex --dangerously-bypass-approvals-and-sandbox "$@"
+}
+
+claude-w() {
+  _agent-w claude --dangerously-skip-permissions "$@"
+}
+
 # Docker
 alias dc="docker compose"
 alias dps="docker ps --format 'table {{.Names}}\t{{.Status}}\t{{.Ports}}'"
