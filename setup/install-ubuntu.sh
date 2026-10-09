@@ -18,11 +18,14 @@ sudo apt install -y \
 
 # --- Rust & Cargo tools ---
 echo "[2/8] Installing Rust and Cargo tools..."
-if ! command -v cargo &>/dev/null; then
-  curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
-  source "$HOME/.cargo/env"
+# Check for rustup, not cargo: an apt-installed cargo is often too old for
+# current crates (worktrunk needs rustc 1.97+), so always use rustup's stable.
+if [ ! -x "$HOME/.cargo/bin/rustup" ]; then
+  curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y --no-modify-path
 fi
-cargo install alacritty eza git-delta zoxide rtk worktrunk
+source "$HOME/.cargo/env"
+rustup update stable
+cargo install --locked alacritty eza git-delta zoxide rtk worktrunk
 
 # --- Oh My Zsh ---
 echo "[3/8] Installing Oh My Zsh..."
@@ -61,10 +64,6 @@ ln -sf "$DOTFILES/starship/starship.toml" "$HOME/.config/starship.toml"
 
 mkdir -p "$HOME/.config/alacritty"
 ln -sf "$DOTFILES/alacritty/alacritty.toml" "$HOME/.config/alacritty/alacritty.toml"
-
-# Git credential helper (Linux-specific path)
-git config --file "$HOME/.gitconfig.local" credential.https://github.com.helper ""
-git config --file "$HOME/.gitconfig.local" --add credential.https://github.com.helper "!/usr/bin/gh auth git-credential"
 
 # --- Regolith (if installed) ---
 if command -v i3 &>/dev/null && [ -d /etc/regolith ]; then
