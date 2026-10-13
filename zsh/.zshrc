@@ -57,9 +57,16 @@ _agent-w() {
   local create=(--create)
   git show-ref --verify --quiet "refs/heads/$name" && create=()
 
-  wt switch "${create[@]}" "$name" -x "$agent" -- "$agent_flag" || return 1
+  wt switch "${create[@]}" "$name" || return 1
+  # Resolve the path now: the agent may switch branches inside the worktree,
+  # so removing by branch name afterwards would miss it.
+  local dir=$(git worktree list --porcelain |
+    awk -v b="branch refs/heads/$name" '/^worktree /{p=substr($0,10)} $0==b{print p}')
+  [[ -n $dir ]] || { print -u2 "No worktree found for $name"; return 1; }
+
+  (cd "$dir" && "$agent" "$agent_flag")
   # ponytail: no --force, so a dirty worktree is kept and wt says why
-  wt remove "$name"
+  wt remove "$dir"
 }
 
 codex-w() {
