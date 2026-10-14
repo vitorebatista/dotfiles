@@ -127,3 +127,4 @@ export HOMEBREW_NO_ASK=1
 
 # Manually sync Claude memory to GitHub (also runs hourly via launchd)
 alias memory-update="$HOME/claude-memory-backup/auto-sync.sh"
+alias argus="herdr --remote argus.exe.xyz"
