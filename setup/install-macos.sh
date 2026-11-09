@@ -25,7 +25,7 @@ brew install \
 echo "[3/8] Installing apps..."
 # font-hack-nerd-font: every glyph in the sketchybar + fastfetch configs
 # stats: what the sketchybar cpu/memory/disk widgets open on click
-for cask in alacritty visual-studio-code docker raycast 1password \
+for cask in visual-studio-code docker raycast 1password \
   font-hack-nerd-font stats; do
   brew install --cask "$cask" 2>/dev/null || true
 done
@@ -132,9 +132,6 @@ ln -sf "$DOTFILES/tmux/.tmux.conf" "$HOME/.tmux.conf"
 
 mkdir -p "$HOME/.config"
 ln -sf "$DOTFILES/starship/starship.toml" "$HOME/.config/starship.toml"
-
-mkdir -p "$HOME/.config/alacritty"
-ln -sf "$DOTFILES/alacritty/alacritty.toml" "$HOME/.config/alacritty/alacritty.toml"
 
 # Git credential helper (macOS-specific path)
 ln -sf "$DOTFILES/aerospace/.aerospace.toml" "$HOME/.aerospace.toml"

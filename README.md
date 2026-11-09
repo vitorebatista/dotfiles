@@ -18,7 +18,7 @@ Personal development environment configuration for **Ubuntu/Regolith** and **mac
 - Local overrides via `~/.gitconfig.local`
 
 ### Terminal
-- **Alacritty** with Dracula theme
+- **Alacritty** with Dracula theme (Linux only; the macOS cask fails Gatekeeper)
 - **Tmux** with sane defaults (Ctrl-A prefix, mouse, splits with `|` and `-`)
 
 ### Editors
@@ -78,7 +78,7 @@ Lua (SbarLua) status bar based on [bin101's config](https://github.com/bin101/do
 | git-delta | beautiful diffs |
 | tmux | terminal multiplexer |
 | ncdu | disk usage analyzer |
-| alacritty | GPU-accelerated terminal |
+| alacritty | GPU-accelerated terminal (Linux only) |
 
 ## Quick start
 
