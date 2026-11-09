@@ -51,7 +51,7 @@ _agent-w() {
   local name="$1"
   shift
 
-  local worktrees_before=$(_agent-w-worktrees) docker_before=$(_agent-w-docker)
+  local start=$PWD worktrees_before=$(_agent-w-worktrees) docker_before=$(_agent-w-docker)
 
   local create=(--create)
   git show-ref --verify --quiet "refs/heads/$name" && create=()
@@ -65,6 +65,8 @@ _agent-w() {
 
   (cd "$dir" && "$@")
   _agent-w-cleanup "$dir" "$worktrees_before" "$docker_before"
+  # wt's shell function cd'd this shell into the worktree; go back
+  cd "$start"
 }
 
 # Worktrees of the repos in ~/Work, except the on-call bot's (.worktrees/).
