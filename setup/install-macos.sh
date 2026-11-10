@@ -176,6 +176,26 @@ defaults write -g NSAutomaticWindowAnimationsEnabled -bool false
 mkdir -p "$HOME/Screenshots"
 defaults write com.apple.screencapture location -string "$HOME/Screenshots"
 
+# Spotlight: exclude ~/Work. Worktrees re-index the same repo all day and kept
+# mds/mdworker at ~50% CPU. Unticking a category in Settings only hides results;
+# this is the real exclusion list (same one as Settings → Spotlight → Search Privacy).
+# Writing it needs sudo AND Full Disk Access for the terminal.
+mkdir -p "$HOME/Work"
+SPOTLIGHT_PLIST=/System/Volumes/Data/.Spotlight-V100/VolumeConfiguration.plist
+if sudo /usr/libexec/PlistBuddy -c "Print :Exclusions" "$SPOTLIGHT_PLIST" 2>/dev/null \
+    | sed 's/^ *//' | grep -qxF "$HOME/Work"; then
+  echo "  Spotlight already excludes ~/Work"
+elif { sudo /usr/libexec/PlistBuddy -c "Print :Exclusions" "$SPOTLIGHT_PLIST" &>/dev/null \
+      || sudo /usr/libexec/PlistBuddy -c "Add :Exclusions array" "$SPOTLIGHT_PLIST"; } 2>/dev/null \
+    && sudo /usr/libexec/PlistBuddy -c "Add :Exclusions:0 string $HOME/Work" "$SPOTLIGHT_PLIST" 2>/dev/null; then
+  sudo killall mds 2>/dev/null || true # launchd respawns it with the new list
+  echo "  Spotlight now excludes ~/Work (expect a few minutes of mds_stores CPU)"
+else
+  echo "  Skipped Spotlight exclusion (terminal needs Full Disk Access). Either grant it"
+  echo "  and re-run, or add ~/Work in Settings → Spotlight → Search Privacy."
+fi
+echo "  Verify: mdfind -onlyin ~/Work -name package.json | wc -l   # want 0"
+
 # Restart affected apps
 killall Finder Dock 2>/dev/null || true
 

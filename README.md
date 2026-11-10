@@ -58,7 +58,7 @@ Lua (SbarLua) status bar based on [bin101's config](https://github.com/bin101/do
 
 ### After a fresh install — permissions macOS will ask for
 `setup/install-macos.sh` installs and links everything, but these grants are manual:
-**Accessibility** for AeroSpace and AerospaceSwipe, **Screen Recording** for AeroSpace (it spawns `screencapture`), **Calendars** for sketchybar (the next-meeting item). AeroSpace fork builds are ad-hoc signed, so its Accessibility grant must be re-approved after every upgrade.
+**Accessibility** for AeroSpace and AerospaceSwipe, **Screen Recording** for AeroSpace (it spawns `screencapture`), **Calendars** for sketchybar (the next-meeting item), and temporarily **Full Disk Access** for your terminal so step 8 can exclude `~/Work` from Spotlight (revoke it afterwards; the exclusion stays). AeroSpace fork builds are ad-hoc signed, so its Accessibility grant must be re-approved after every upgrade.
 
 ### Regolith (Linux only)
 - i3xrocks bar: CPU%, Memory%, Disk%, Temperature, Battery, Time
